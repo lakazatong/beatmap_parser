@@ -1,0 +1,4 @@
+gen.py
+*.o
+*test*
+*.osu
