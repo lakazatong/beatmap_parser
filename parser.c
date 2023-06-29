@@ -60,21 +60,14 @@ char* strip(char* string) {
 }
 
 void substring(char* out, char* string, int start_index, int end_index) {
-	int length = strlen(string);
 	int substring_length;
-
-	if (end_index == -1) {
-		substring_length = length - start_index;
-	} else {
-		substring_length = end_index - start_index + 1;
-	}
-
+	if (end_index == -1){ substring_length = strlen(string) - start_index;}
+	else 				{ substring_length = end_index - start_index; }
 	if (substring_length <= 0) {
-		printf("substring: substring_length is negative or null\n");
-		out[0] = '\0';
+		printf("substring: substring_length negative or null\n");
+		out = NULL;
 		return;
 	}
-
 	if (out == string) {
 		// In-place modification
 		memmove(out, out + start_index, substring_length + 1);
@@ -84,33 +77,21 @@ void substring(char* out, char* string, int start_index, int end_index) {
 		strncpy(out, string + start_index, substring_length);
 		out[substring_length] = '\0';
 	}
-
 	remove_chars(out);
 }
 
 void subint(int* out, char* string, int start_index, int end_index) {
-	int length = strlen(string);
 	int substring_length;
-
-	if (end_index == -1) {
-		substring_length = length - start_index;
-	} else {
-		substring_length = end_index - start_index + 1;
-	}
-
+	if (end_index == -1){ substring_length = strlen(string) - start_index;}
+	else 				{ substring_length = end_index - start_index; }
 	if (substring_length <= 0) {
-		printf("subint: substring_length is negative or null\n");
-		*out = 0;
+		printf("subint: substring_length negative or null\n");
 		return;
 	}
-
-	char tmp[substring_length + 1];
 	strncpy(tmp, string + start_index, substring_length);
 	tmp[substring_length] = '\0';
-
 	char* end_ptr;
 	*out = strtol(remove_chars(tmp), &end_ptr, 10);
-
 	if (*end_ptr != '\0') {
 		printf("subint: strtol failed\n");
 		exit(1);
@@ -118,30 +99,19 @@ void subint(int* out, char* string, int start_index, int end_index) {
 }
 
 void subfloat(float* out, char* string, int start_index, int end_index) {
-	int length = strlen(string);
 	int substring_length;
-
-	if (end_index == -1) {
-		substring_length = length - start_index;
-	} else {
-		substring_length = end_index - start_index + 1;
-	}
-
+	if (end_index == -1){ substring_length = strlen(string) - start_index;}
+	else 				{ substring_length = end_index - start_index; }
 	if (substring_length <= 0) {
-		printf("subfloat: substring_length is negative or null\n");
-		*out = 0.0f;
+		printf("subfloat: substring_length negative or null\n");
 		return;
 	}
-
-	char tmp[substring_length + 1];
 	strncpy(tmp, string + start_index, substring_length);
 	tmp[substring_length] = '\0';
-
 	char* end_ptr;
 	*out = strtof(remove_chars(tmp), &end_ptr);
-
-	if (*end_ptr != '\0') {
-		printf("subfloat: strtof failed\n");
+	if (*end_ptr != '\0'){
+		printf("subfloat: subfloat failed\n");
 		exit(1);
 	}
 }
@@ -479,8 +449,173 @@ void parse_colours(List* colours){
 	printf("parse_colours: impossible case reached\n");
 }
 
+char* parse_curvePoint(Slider* slider, char* token){
+	char* colon = strchr(token, ':');
+	if (colon == NULL) {
+		printf("parse_curvePoint: wrong CurvePoint format\n");
+		exit(1);
+	}
+	CurvePoint* curvePoint = new_curvePoint();
+	int end_index = colon - token;
+	subint(&curvePoint->x, token, 0, end_index);
+	subint(&curvePoint->y, token, end_index+1, -1);
+	list_add(slider->curvePoints, curvePoint);
+	return strtok(NULL, "|");
+}
+
+char* parse_edgeSound(Slider* slider, char* token){
+	int edgeSound;
+	subint(&edgeSound, token, 0, -1);
+	ilist_add(slider->edgeSounds, edgeSound);
+	return strtok(NULL, "|");
+}
+
+char* parse_edgeSet(Slider* slider, char* token){
+	char* colon = strchr(token, ':');
+	if (colon == NULL) {
+		printf("parse_edgeSet: wrong EdgeSet format\n");
+		exit(1);
+	}
+	EdgeSet* edgeSet = new_edgeSet();
+	int end_index = colon - token;
+	substring(edgeSet->normalSet, token, 0, end_index);
+	substring(edgeSet->additionSet, token, end_index+1, -1);
+	list_add(slider->edgeSets, edgeSet);
+	return strtok(NULL, "|");
+}
+
+void parse_hitSample(HitObject* hitObject, char* token){
+	token = strtok(token, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->normalSet, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->additionSet, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->index, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->volume, token, 0, -1);
+	token = strtok(NULL, "");
+	strcpy(hitObject->hitSample->filename, remove_chars(token));
+}
+
+char* parse_slider(HitObject* hitObject){
+	char* token;
+	char* next_token;
+	Slider* slider = new_slider();
+	hitObject->type = 1;
+	hitObject->object = slider;
+	token = strtok(NULL, "|");
+	if (token == NULL) {
+		printf("parse_slider: incomplete Slider, missing curveType\n");
+		return NULL;
+	}
+	slider->curveType = token[0];
+	token = strtok(NULL, ",");
+	strcpy(buf, token);
+	next_token = token+strlen(buf)+1;
+	token = strtok(buf, "|");
+	while (token != NULL) token = parse_curvePoint(slider, token);
+	token = strtok(next_token, ",");
+	if (token == NULL) {
+		printf("parse_slider: incomplete Slider, missing slides\n");
+		return NULL;
+	}
+	subint(&slider->slides, token, 0, -1);
+	token = strtok(NULL, ",");
+	if (token == NULL) {
+		printf("parse_slider: incomplete Slider, missing length\n");
+		return NULL;
+	}
+	subfloat(&slider->length, token, 0, -1);
+	token = strtok(NULL, ",");
+	if (token == NULL) return NULL;
+	strcpy(buf, token);
+	next_token = token+strlen(buf)+1;
+	token = strtok(buf, "|");
+	while (token != NULL) token = parse_edgeSound(slider, token);
+	token = strtok(next_token, ",");
+	if (token == NULL) return NULL;
+	strcpy(buf, token);
+	next_token = token+strlen(buf)+1;
+	token = strtok(buf, "|");
+	while (token != NULL) token = parse_edgeSet(slider, token);
+	return next_token;
+}
+
+char* parse_spinner(HitObject* hitObject){
+	char* token;
+	Spinner* spinner = new_spinner();
+	hitObject->type = 2;
+	hitObject->object = spinner;
+	token = strtok(NULL, ",");
+	subint(&spinner->endTime, token, 0, -1);
+	return strtok(NULL, "");
+}
+
+char* parse_hold(HitObject* hitObject){
+	char* token;
+	Hold* hold = new_hold();
+	hitObject->type = 3;
+	hitObject->object = hold;
+	token = strtok(NULL, ",");
+	subint(&hold->endTime, token, 0, -1);
+	return strtok(NULL, "");
+}
+
 void parse_hitObjects(List* hitObjects){
-	return;
+	char* token;
+	HitObject* hitObject = new_hitObject();
+	token = strtok(line, ",");
+	if (token == NULL) {
+		printf("parse_hitObjects: incomplete hitObject, missing x\n");
+		return;
+	}
+	subint(&hitObject->x, token, 0, -1);
+	token = strtok(NULL, ",");
+	if (token == NULL) {
+		printf("parse_hitObjects: incomplete hitObject, missing y\n");
+		return;
+	}
+	subint(&hitObject->y, token, 0, -1);
+	token = strtok(NULL, ",");
+	if (token == NULL) {
+		printf("parse_hitObjects: incomplete hitObject, missing time\n");
+		return;
+	}
+	subint(&hitObject->time, token, 0, -1);
+	token = strtok(NULL, ",");
+	if (token == NULL) {
+		printf("parse_hitObjects: incomplete hitObject, missing type\n");
+		return;
+	}
+	int type_flags;
+	subint(&type_flags, token, 0, -1);
+	hitObject->new_combo = (type_flags & 0b00000100) ? 1 : 0;
+	hitObject->combo_skip = (type_flags & 0b01110000) >> 4;
+	token = strtok(NULL, ",");
+	if (token == NULL) {
+		printf("parse_hitObjects: incomplete hitObject, missing hitSound\n");
+		return;
+	}
+	int hitSound_flags;
+	subint(&hitSound_flags, token, 0, -1);
+	if (hitSound_flags != 0){
+		hitObject->hitSound->normal = hitSound_flags & 0b0001;
+		hitObject->hitSound->whistle = (hitSound_flags & 0b0010) ? 1 : 0;
+		hitObject->hitSound->finish = (hitSound_flags & 0b0100) ? 1 : 0;
+		hitObject->hitSound->clap = (hitSound_flags & 0b1000) ? 1 : 0;
+	}
+	char* next_token = NULL;
+	int type = type_flags & 0b10001011;
+	if (type == 1) next_token = strtok(NULL, "");
+	else if (type == 2) next_token = parse_slider(hitObject);
+	else if (type == 8) next_token = parse_spinner(hitObject);
+	else if (type == 128) next_token = parse_hold(hitObject);
+	else{
+		printf("parse_hitObjects: unkown type (%i)\n", type);
+		return;
+	}
+	parse_hitSample(hitObject, next_token);
+	list_add(hitObjects, hitObject);
 }
 
 Beatmap* parse_beatmap(char* osuFile){

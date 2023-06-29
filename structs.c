@@ -119,6 +119,15 @@ Colour* new_colour(){
 	return r;
 }
 
+HitSound* new_hitSound(){
+	HitSound* r = malloc(sizeof(HitSound));
+	r->normal = 1;
+	r->whistle = 0;
+	r->finish = 0;
+	r->clap = 0;
+	return r;
+}
+
 HitSample* new_hitSample(){
 	HitSample* r = malloc(sizeof(HitSample));
 	r->normalSet = 0;
@@ -129,14 +138,28 @@ HitSample* new_hitSample(){
 	return r;
 }
 
+CurvePoint* new_curvePoint(){
+	CurvePoint* r = malloc(sizeof(CurvePoint));
+	r->x = 0;
+	r->y = 0;
+	return r;
+}
+
+EdgeSet* new_edgeSet(){
+	EdgeSet* r = malloc(sizeof(EdgeSet));
+	r->normalSet = NULL;
+	r->additionSet = NULL;
+	return r;
+}
+
 Slider* new_slider(){
 	Slider* r = malloc(sizeof(Slider));
 	r->curveType = 0;
-	r->curvePoints = new_slist(0);
+	r->curvePoints = new_list(0);
 	r->slides = 0;
 	r->length = 0.0;
 	r->edgeSounds = new_ilist(0);
-	r->edgeSets = new_slist(0);
+	r->edgeSets = new_list(0);
 	return r;
 }
 
@@ -156,8 +179,11 @@ HitObject* new_hitObject(){
 	HitObject* r = malloc(sizeof(HitObject));
 	r->x = 0;
 	r->y = 0;
+	r->time = 0;
 	r->type = 0;
-	r->hitSound = 0;
+	r->new_combo = 0;
+	r->combo_skip = 0;
+	r->hitSound = new_hitSound();
 	r->object = NULL;
 	r->hitSample = new_hitSample();
 	return r;
@@ -239,9 +265,9 @@ void free_hitSample(HitSample* hitSample){
 }
 
 void free_slider(Slider* slider){
-	free_slist(slider->curvePoints);
+	free_list(slider->curvePoints);
 	free_ilist(slider->edgeSounds);
-	free_slist(slider->edgeSets);
+	free_list(slider->edgeSets);
 	free(slider);
 }
 
@@ -250,6 +276,7 @@ void free_hitObject(HitObject* hitObject){
 		free_slider((Slider*)hitObject->object);
 	else if (hitObject->type != 0)
 		free(hitObject->object);
+	free(hitObject->hitSound);
 	free_hitSample(hitObject->hitSample);
 	free(hitObject);
 }

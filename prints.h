@@ -14,5 +14,12 @@ void printTimingPoint(const TimingPoint* timingPoint);
 void printTimingPoints(const List* timingPoints);
 void printColour(const Colour* colour);
 void printColours(const List* colours);
+void printHitSound(const HitSound* hitSound);
+void printHitSample(const HitSample* hitSample);
+void printSlider(const Slider* slider);
+void printSpinner(const Spinner* spinner);
+void printHold(const Hold* hold);
+void printHitObject(const HitObject* hitObject);
+void printHitObjects(const List* hitObjects);
 
 #endif

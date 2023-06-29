@@ -178,3 +178,104 @@ void printColours(const List* colours) {
 	}
 	printf("\n");
 }
+
+void printHitSound(const HitSound* hitSound) {
+	printf("\tNormal: %d\n", hitSound->normal);
+	printf("\tWhistle: %d\n", hitSound->whistle);
+	printf("\tFinish: %d\n", hitSound->finish);
+	printf("\tClap: %d\n", hitSound->clap);
+}
+
+void printHitSample(const HitSample* hitSample) {
+	printf("\tNormalSet: %d\n", hitSample->normalSet);
+	printf("\tAdditionSet: %d\n", hitSample->additionSet);
+	printf("\tIndex: %d\n", hitSample->index);
+	printf("\tVolume: %d\n", hitSample->volume);
+	printf("\tFilename: %s\n", hitSample->filename);
+}
+
+void printSlider(const Slider* slider) {
+	printf("Slider:\n");
+	printf("\tCurveType: %c\n", slider->curveType);
+	printf("\tCurvePoints: [");
+	for (int i = 0; i < slider->curvePoints->size; i++) {
+		CurvePoint* curvePoint = (CurvePoint*)slider->curvePoints->elements[i];
+		printf("(%d, %d)", curvePoint->x, curvePoint->y);
+		if (i < slider->curvePoints->size - 1) {
+			printf(", ");
+		}
+	}
+	printf("]\n");
+	printf("\tSlides: %d\n", slider->slides);
+	printf("\tLength: %.2f\n", slider->length);
+	printf("\tEdgeSounds: ");
+	if (slider->edgeSounds == NULL)
+		printf("NULL\n");
+	else
+		print_int_list(slider->edgeSounds->elements, slider->edgeSounds->size);
+	printf("\tEdgeSets: [");
+	for (int i = 0; i < slider->edgeSets->size; i++) {
+		EdgeSet* edgeSet = (EdgeSet*)slider->edgeSets->elements[i];
+		printf("(%s, %s)", edgeSet->normalSet, edgeSet->additionSet);
+		if (i < slider->edgeSets->size - 1) {
+			printf(", ");
+		}
+	}
+	printf("]\n");
+}
+
+void printSpinner(const Spinner* spinner) {
+	printf("Spinner:\n");
+	printf("\tEndTime: %d\n", spinner->endTime);
+}
+
+void printHold(const Hold* hold) {
+	printf("Hold:\n");
+	printf("\tEndTime: %d\n", hold->endTime);
+}
+
+void printHitObject(const HitObject* hitObject) {
+	printf("HitObject:\n\n");
+	printf("X: %d\n", hitObject->x);
+	printf("Y: %d\n", hitObject->y);
+	printf("Time: %d\n", hitObject->time);
+	printf("Type: %d\n", hitObject->type);
+	printf("NewCombo: %d\n", hitObject->new_combo);
+	printf("ComboSkip: %d\n", hitObject->combo_skip);
+	printf("HitSound:\n");
+	if (hitObject->hitSound != NULL) printHitSound(hitObject->hitSound);
+	else {
+		printf("wtf\n");
+		exit(1);
+	}
+	printf("Object: ");
+	if (hitObject->type == 0) {
+		printf("HitCircle\n");
+	} else if (hitObject->type == 1) {
+		Slider* slider = (Slider*)hitObject->object;
+		printSlider(slider);
+	} else if (hitObject->type == 2) {
+		Spinner* spinner = (Spinner*)hitObject->object;
+		printSpinner(spinner);
+	} else if (hitObject->type == 3) {
+		Hold* hold = (Hold*)hitObject->object;
+		printHold(hold);
+	}
+	printf("HitSample:\n");
+	printHitSample(hitObject->hitSample);
+}
+
+void printHitObjects(const List* hitObjects) {
+	if (hitObjects == NULL || hitObjects->elements == NULL) {
+		printf("Invalid HitObject list.\n");
+		return;
+	}
+	int size = hitObjects->size;
+	printf("HitObjects (%d):\n\n", size);
+	for (int i = 0; i < size; i++) {
+		HitObject* hitObject = (HitObject*)hitObjects->elements[i];
+		printHitObject(hitObject);
+		printf("\n");
+	}
+	printf("\n");
+}

@@ -110,12 +110,29 @@ typedef struct {
 } Colour;
 
 typedef struct {
+	int normal;
+	int whistle;
+	int finish;
+	int clap;
+} HitSound;
+
+typedef struct {
 	int normalSet;
 	int additionSet;
 	int index;
 	int volume;
 	char* filename;
 } HitSample;
+
+typedef struct {
+	int x;
+	int y;
+} CurvePoint;
+
+typedef struct {
+	char* normalSet;
+	char* additionSet;
+} EdgeSet;
 
 /* no additional params
 typedef struct {
@@ -124,11 +141,11 @@ typedef struct {
 
 typedef struct {
 	char curveType;
-	sList* curvePoints;
+	List* curvePoints; // CurvePoint*
 	int slides;
 	float length;
 	iList* edgeSounds;
-	sList* edgeSets;
+	List* edgeSets;  // EdgeSet*
 } Slider;
 
 typedef struct {
@@ -145,8 +162,11 @@ typedef struct {
 typedef struct {
 	int x;
 	int y;
-	int type; 
-	int hitSound;
+	int time;
+	int type;
+	int new_combo;
+	int combo_skip;
+	HitSound* hitSound;
 	void* object; // 0 HitCircle 1 Slider 2 Spinner 3 Hold
 	HitSample* hitSample;
 } HitObject;
@@ -175,7 +195,10 @@ Event* new_event();
 TimingPoint* new_timingPoint();
 ComboColour* new_comboColour();
 Colour* new_colour();
+HitSound* new_hitSound();
 HitSample* new_hitSample();
+CurvePoint* new_curvePoint();
+EdgeSet* new_edgeSet();
 Slider* new_slider();
 Spinner* new_spinner();
 Hold* new_hold();
