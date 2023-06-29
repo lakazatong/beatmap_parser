@@ -72,7 +72,7 @@ void printMetadata(const Metadata* metadata) {
 	else
 		print_string_list(metadata->tags->elements, metadata->tags->size);
 	printf("Beatmap ID: %d\n", metadata->beatmapID);
-	printf("Beatmap Set ID: %d\n", metadata->beatmapSetID);
+	printf("Beatmap Set ID: %d\n\n", metadata->beatmapSetID);
 }
 
 void printDifficulty(const Difficulty* difficulty) {
@@ -83,4 +83,98 @@ void printDifficulty(const Difficulty* difficulty) {
 	printf("Approach Rate: %.2f\n", difficulty->approachRate);
 	printf("Slider Multiplier: %.2f\n", difficulty->sliderMultiplier);
 	printf("Slider Tick Rate: %.2f\n\n", difficulty->sliderTickRate);
+}
+
+void printEvent(const Event* event) {
+	if (event == NULL) {
+		printf("Invalid event.\n");
+		return;
+	}
+
+	int eventType = event->type;
+	int startTime = event->startTime;
+
+	printf("Event Type: %d\n", eventType);
+	printf("Start Time: %d\n", startTime);
+
+	if (eventType == 0) {
+		BackgroundEvent* backgroundEvent = (BackgroundEvent*)event->event;
+		printf("Filename: %s\n", backgroundEvent->filename);
+		printf("xOffset: %d\n", backgroundEvent->xOffset);
+		printf("yOffset: %d\n", backgroundEvent->yOffset);
+	} else if (eventType == 1) {
+		VideoEvent* videoEvent = (VideoEvent*)event->event;
+		printf("Filename: %s\n", videoEvent->filename);
+		printf("xOffset: %d\n", videoEvent->xOffset);
+		printf("yOffset: %d\n", videoEvent->yOffset);
+	} else if (eventType == 2) {
+		BreakEvent* breakEvent = (BreakEvent*)event->event;
+		printf("End Time: %d\n", breakEvent->endTime);
+	} else {
+		printf("Unknown event type.\n");
+	}
+}
+
+void printEvents(const List* events) {
+	if (events == NULL || events->elements == NULL) {
+		printf("Invalid Event list.\n");
+		return;
+	}
+	int size = events->size;
+	printf("Events (%d):\n\n", size);
+	for (int i = 0; i < size; i++) {
+		Event* event = (Event*)events->elements[i];
+		printEvent(event);
+		printf("\n");
+	}
+	printf("\n");
+}
+
+void printTimingPoint(const TimingPoint* timingPoint) {
+	printf("Time: %d\n", timingPoint->time);
+	printf("Beat Length: %f\n", timingPoint->beatLength);
+	printf("Meter: %d\n", timingPoint->meter);
+	printf("Sample Set: %d\n", timingPoint->sampleSet);
+	printf("Sample Index: %d\n", timingPoint->sampleIndex);
+	printf("Volume: %d\n", timingPoint->volume);
+	printf("Uninherited: %d\n", timingPoint->uninherited);
+	printf("Effects: %d\n", timingPoint->effects);
+}
+
+void printTimingPoints(const List* timingPoints) {
+	if (timingPoints == NULL || timingPoints->elements == NULL) {
+		printf("Invalid TimingPoint list.\n");
+		return;
+	}
+	int size = timingPoints->size;
+	printf("TimingPoints (%d):\n\n", size);
+	for (int i = 0; i < size; i++) {
+		TimingPoint* timingPoint = (TimingPoint*)timingPoints->elements[i];
+		printTimingPoint(timingPoint);
+		printf("\n");
+	}
+	printf("\n");
+}
+
+void printColour(const Colour* colour) {
+	printf("Type: %d\n", colour->type);
+	printf("Red: %d\n", colour->red);
+	printf("Green: %d\n", colour->green);
+	printf("Blue: %d\n", colour->blue);
+	if (colour->type == 0) printf("Combo: %d\n", ((ComboColour*)colour->object)->combo);
+}
+
+void printColours(const List* colours) {
+	if (colours == NULL || colours->elements == NULL) {
+		printf("Invalid Colour list.\n");
+		return;
+	}
+	int size = colours->size;
+	printf("Colours (%d):\n\n", size);
+	for (int i = 0; i < size; i++) {
+		Colour* colour = (Colour*)colours->elements[i];
+		printColour(colour);
+		printf("\n");
+	}
+	printf("\n");
 }

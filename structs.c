@@ -86,6 +86,7 @@ Event* new_event(){
 	Event* r = malloc(sizeof(Event));
 	r->type = 0;
 	r->startTime = 0;
+	r->event = NULL;
 	return r;
 }
 
@@ -102,11 +103,19 @@ TimingPoint* new_timingPoint(){
 	return r;
 }
 
+ComboColour* new_comboColour(){
+	ComboColour* r = malloc(sizeof(ComboColour));
+	r->combo = 0;
+	return r;
+}
+
 Colour* new_colour(){
 	Colour* r = malloc(sizeof(Colour));
-	r->combo = 0;
-	r->SliderTrackOverride = 0;
-	r->SliderBorder = 0;
+	r->type = 0;
+	r->red = 0;
+	r->green = 0;
+	r->blue = 0;
+	r->object = NULL;
 	return r;
 }
 
@@ -123,11 +132,11 @@ HitSample* new_hitSample(){
 Slider* new_slider(){
 	Slider* r = malloc(sizeof(Slider));
 	r->curveType = 0;
-	r->curvePoints = new_list(0);
+	r->curvePoints = new_slist(0);
 	r->slides = 0;
 	r->length = 0.0;
 	r->edgeSounds = new_ilist(0);
-	r->edgeSets = new_list(0);
+	r->edgeSets = new_slist(0);
 	return r;
 }
 
@@ -149,6 +158,7 @@ HitObject* new_hitObject(){
 	r->y = 0;
 	r->type = 0;
 	r->hitSound = 0;
+	r->object = NULL;
 	r->hitSample = new_hitSample();
 	return r;
 }
@@ -219,6 +229,7 @@ void free_timingPoint(TimingPoint* timingPoint){
 }
 
 void free_colour(Colour* colour){
+	if (colour->type == 0) free(colour->object);
 	free(colour);
 }
 
@@ -228,16 +239,16 @@ void free_hitSample(HitSample* hitSample){
 }
 
 void free_slider(Slider* slider){
-	free_list(slider->curvePoints);
+	free_slist(slider->curvePoints);
 	free_ilist(slider->edgeSounds);
-	free_list(slider->edgeSets);
+	free_slist(slider->edgeSets);
 	free(slider);
 }
 
 void free_hitObject(HitObject* hitObject){
 	if (hitObject->type == 1)
 		free_slider((Slider*)hitObject->object);
-	else
+	else if (hitObject->type != 0)
 		free(hitObject->object);
 	free_hitSample(hitObject->hitSample);
 	free(hitObject);

@@ -40,7 +40,7 @@ typedef struct {
 	char* creator;
 	char* version;
 	char* source;
-	sList* tags; // char*
+	sList* tags;
 	int beatmapID;
 	int beatmapSetID;
 } Metadata;
@@ -54,33 +54,28 @@ typedef struct {
 	float sliderTickRate;
 } Difficulty;
 
-// ...,filename,xOffset,yOffset
 typedef struct {
 	char* filename;
 	int xOffset;
 	int yOffset;
 } BackgroundEvent;
 
-// ...,filename,xOffset,yOffset
 typedef struct {
 	char* filename;
 	int xOffset;
 	int yOffset;
 } VideoEvent;
 
-// ...,endTime
 typedef struct {
 	int endTime;
 } BreakEvent;
 
-// eventType,startTime,eventParams
 typedef struct {
 	int type; 
 	int startTime;
 	void* event; // 0 BackgroundEvent 1 VideoEvent 2 BreakEvent
 } Event;
 
-// time,beatLength,meter,sampleSet,sampleIndex,volume,uninherited,effects
 typedef struct {
 	int time;
 	float beatLength;
@@ -94,53 +89,59 @@ typedef struct {
 
 typedef struct {
 	int combo;
-	int SliderTrackOverride;
-	int SliderBorder;
+} ComboColour;
+
+/* no additional params
+typedef struct {
+
+} SliderTrackOverrideColour; */
+
+/* no additional params
+typedef struct {
+
+} SliderBorderColour; */
+
+typedef struct {
+	int type; // 0 ComboColour 1 SliderTrackOverrideColour 2 SliderBorderColour
+	int red;
+	int green;
+	int blue;
+	void* object;
 } Colour;
 
-// normalSet:additionSet:index:volume:filename
 typedef struct {
 	int normalSet;
 	int additionSet;
 	int index;
 	int volume;
-	// <sampleSet>-hit<hitSound><index>.wav
 	char* filename;
 } HitSample;
-/*
-// no additional params
+
+/* no additional params
 typedef struct {
 
-} HitCircle;
-*/
-// ...,curveType|curvePoints,slides,length,edgeSounds,edgeSets,...
+} HitCircle; */
+
 typedef struct {
-	// B = bézier, C = centripetal catmull-rom, L = linear, P = perfect circle
 	char curveType;
-	// x1:y1|x2:y2|... (?)
-	List* curvePoints; // char*
+	sList* curvePoints;
 	int slides;
 	float length;
-	// integer1|interger2|... (?)
 	iList* edgeSounds;
-	// normalSet1:additionSet1|normalSet2:additionSet2|... (?)
-	List* edgeSets; // char*
+	sList* edgeSets;
 } Slider;
 
-// ...,endTime,...
 typedef struct {
 	// x = 256
 	// y = 192
 	int endTime;
 } Spinner;
 
-// ...,endTime:...
 typedef struct {
 	// y = 192
 	int endTime;
 } Hold;
 
-// x,y,time,type,hitSound,objectParams,hitSample
 typedef struct {
 	int x;
 	int y;
@@ -172,6 +173,7 @@ VideoEvent* new_videoEvent();
 BreakEvent* new_breakEvent();
 Event* new_event();
 TimingPoint* new_timingPoint();
+ComboColour* new_comboColour();
 Colour* new_colour();
 HitSample* new_hitSample();
 Slider* new_slider();
