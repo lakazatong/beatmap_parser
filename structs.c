@@ -2,20 +2,20 @@
 
 General* new_general(){
 	General* r = malloc(sizeof(General));
-	r->audioFilename = NULL;
+	r->audioFilename = malloc(1*sizeof(char));
 	r->audioLeadIn = 0;
-	r->audioHash = NULL;
-	r->previewTime = 0;
-	r->countdown = 0;
-	r->sampleSet = NULL;
-	r->stackLeniency = 0;
+	r->audioHash = malloc(1*sizeof(char));
+	r->previewTime = -1;
+	r->countdown = 1;
+	r->sampleSet = malloc(1*sizeof(char));
+	r->stackLeniency = 0.7;
 	r->mode = 0;
 	r->letterboxInBreaks = 0;
-	r->storyFireInFront = 0;
+	r->storyFireInFront = 1;
 	r->useSkinSprites = 0;
 	r->alwaysShowPlayfield = 0;
-	r->overlayPosition = NULL;
-	r->skinPreference = NULL;
+	r->overlayPosition = malloc(1*sizeof(char));
+	r->skinPreference = malloc(1*sizeof(char));
 	r->epilepsyWarning = 0;
 	r->countdownOffset = 0;
 	r->specialStyle = 0;
@@ -26,43 +26,43 @@ General* new_general(){
 
 Editor* new_editor(){
 	Editor* r = malloc(sizeof(Editor));
-	r->bookmarks = NULL;
-	r->distanceSpacing = 0;
+	r->bookmarks = new_ilist(0);
+	r->distanceSpacing = 0.0;
 	r->beatDivisor = 0;
 	r->gridSize = 0;
-	r->timelineZoom = 0;
+	r->timelineZoom = 0.0;
 	return r;
 }
 
 Metadata* new_metadata(){
 	Metadata* r = malloc(sizeof(Metadata));
-	r->title = NULL;
-	r->titleUnicode = NULL;
-	r->artist = NULL;
-	r->artistUnicode = NULL;
-	r->creator = NULL;
-	r->version = NULL;
-	r->source = NULL;
-	r->tags = NULL;
+	r->title = malloc(1*sizeof(char));
+	r->titleUnicode = malloc(1*sizeof(char));
+	r->artist = malloc(1*sizeof(char));
+	r->artistUnicode = malloc(1*sizeof(char));
+	r->creator = malloc(1*sizeof(char));
+	r->version = malloc(1*sizeof(char));
+	r->source = malloc(1*sizeof(char));
+	r->tags = new_slist(0);
 	r->beatmapID = 0;
-	r->beatmapsetID = 0;
+	r->beatmapSetID = 0;
 	return r;
 }
 
 Difficulty* new_difficulty(){
 	Difficulty* r = malloc(sizeof(Difficulty));
-	r->hpDrainRate = 0;
-	r->circleSize = 0;
-	r->overallDifficulty = 0;
-	r->approachRate = 0;
-	r->sliderMultiplier = 0;
-	r->sliderTickRate = 0;
+	r->hpDrainRate = 0.0;
+	r->circleSize = 0.0;
+	r->overallDifficulty = 0.0;
+	r->approachRate = 0.0;
+	r->sliderMultiplier = 0.0;
+	r->sliderTickRate = 0.0;
 	return r;
 }
 
 BackgroundEvent* new_backgroundEvent(){
 	BackgroundEvent* r = malloc(sizeof(BackgroundEvent));
-	r->filename = NULL;
+	r->filename = malloc(1*sizeof(char));
 	r->xOffset = 0;
 	r->yOffset = 0;
 	return r;
@@ -70,7 +70,7 @@ BackgroundEvent* new_backgroundEvent(){
 
 VideoEvent* new_videoEvent(){
 	VideoEvent* r = malloc(sizeof(VideoEvent));
-	r->filename = NULL;
+	r->filename = malloc(1*sizeof(char));
 	r->xOffset = 0;
 	r->yOffset = 0;
 	return r;
@@ -92,7 +92,7 @@ Event* new_event(){
 TimingPoint* new_timingPoint(){
 	TimingPoint* r = malloc(sizeof(TimingPoint));
 	r->time = 0;
-	r->beatLength = 0;
+	r->beatLength = 0.0;
 	r->meter = 0;
 	r->sampleSet = 0;
 	r->sampleIndex = 0;
@@ -116,18 +116,18 @@ HitSample* new_hitSample(){
 	r->additionSet = 0;
 	r->index = 0;
 	r->volume = 0;
-	r->filename = NULL;
+	r->filename = malloc(1*sizeof(char));
 	return r;
 }
 
 Slider* new_slider(){
 	Slider* r = malloc(sizeof(Slider));
 	r->curveType = 0;
-	r->curvePoints = NULL;
+	r->curvePoints = new_list(0);
 	r->slides = 0;
-	r->length = 0;
-	r->edgeSounds = NULL;
-	r->edgeSets = NULL;
+	r->length = 0.0;
+	r->edgeSounds = new_ilist(0);
+	r->edgeSets = new_list(0);
 	return r;
 }
 
@@ -149,32 +149,46 @@ HitObject* new_hitObject(){
 	r->y = 0;
 	r->type = 0;
 	r->hitSound = 0;
-	r->hitSample = NULL;
+	r->hitSample = new_hitSample();
 	return r;
 }
 
 Beatmap* new_beatmap(){
 	Beatmap* r = malloc(sizeof(Beatmap));
-	r->general = NULL;
-	r->editor = NULL;
-	r->metadata = NULL;
-	r->difficulty = NULL;
-	r->events = NULL;
-	r->timingPoints = NULL;
-	r->colours = NULL;
-	r->hitObjects = NULL;
+	r->general = new_general();
+	r->editor = new_editor();
+	r->metadata = new_metadata();
+	r->difficulty = new_difficulty();
+	r->events = new_list(0);
+	r->timingPoints = new_list(0);
+	r->colours = new_list(0);
+	r->hitObjects = new_list(0);
 	return r;
 }
 
 void free_general(General* general){
+	free(general->audioFilename);
+	free(general->audioHash);
+	free(general->sampleSet);
+	free(general->overlayPosition);
+	free(general->skinPreference);
 	free(general);
 }
 
 void free_editor(Editor* editor){
+	free_ilist(editor->bookmarks);
 	free(editor);
 }
 
 void free_metadata(Metadata* metadata){
+	free(metadata->title);
+	free(metadata->titleUnicode);
+	free(metadata->artist);
+	free(metadata->artistUnicode);
+	free(metadata->creator);
+	free(metadata->version);
+	free(metadata->source);
+	free_slist(metadata->tags);
 	free(metadata);
 }
 
@@ -183,29 +197,20 @@ void free_difficulty(Difficulty* difficulty){
 }
 
 void free_backgroundEvent(BackgroundEvent* backgroundEvent){
+	free(backgroundEvent->filename);
 	free(backgroundEvent);
 }
 
 void free_videoEvent(VideoEvent* videoEvent){
+	free(videoEvent->filename);
 	free(videoEvent);
 }
 
-void free_breakEvent(BreakEvent* breakEvent){
-	free(breakEvent);
-}
-
 void free_event(Event* event){
-	switch (event->type){
-		case 0:
-			free_backgroundEvent((BackgroundEvent*)event->event);
-			break;
-		case 1:
-			free_videoEvent((VideoEvent*)event->event);
-			break;
-		case 2:
-			free_breakEvent((BreakEvent*)event->event);
-			break;
-	}
+	if (event->type == 0) free_backgroundEvent((BackgroundEvent*)event->event);
+	else if (event->type == 1) free_videoEvent((VideoEvent*)event->event);
+	else
+		free(event->event);
 	free(event);
 }
 
@@ -218,35 +223,22 @@ void free_colour(Colour* colour){
 }
 
 void free_hitSample(HitSample* hitSample){
+	free(hitSample->filename);
 	free(hitSample);
 }
 
 void free_slider(Slider* slider){
+	free_list(slider->curvePoints);
+	free_ilist(slider->edgeSounds);
+	free_list(slider->edgeSets);
 	free(slider);
 }
 
-void free_spinner(Spinner* spinner){
-	free(spinner);
-}
-
-void free_hold(Hold* hold){
-	free(hold);
-}
-
 void free_hitObject(HitObject* hitObject){
-	switch (hitObject->type){
-		case 0:
-			break;
-		case 1:
-			free_slider((Slider*)hitObject->object);
-			break;
-		case 2:
-			free_spinner((Spinner*)hitObject->object);
-			break;
-		case 3:
-			free_hold((Hold*)hitObject->object);
-			break;
-	}
+	if (hitObject->type == 1)
+		free_slider((Slider*)hitObject->object);
+	else
+		free(hitObject->object);
 	free_hitSample(hitObject->hitSample);
 	free(hitObject);
 }
@@ -257,25 +249,17 @@ void free_beatmap(Beatmap* beatmap){
 	free_metadata(beatmap->metadata);
 	free_difficulty(beatmap->difficulty);
 	int i = 0;
-	while (beatmap->events->elements[i] != NULL){
-		free_event(beatmap->events->elements[i]);
-		i += 1;
-	}
+	while (i < beatmap->events->size) free_event(beatmap->events->elements[i++]);
+	free(beatmap->events);
 	i = 0;
-	while (beatmap->timingPoints->elements[i] != NULL){
-		free_timingPoint(beatmap->timingPoints->elements[i]);
-		i += 1;
-	}
+	while (i < beatmap->timingPoints->size) free_timingPoint(beatmap->timingPoints->elements[i++]);
+	free(beatmap->timingPoints);
 	i = 0;
-	while (beatmap->colours->elements[i] != NULL){
-		free_colour(beatmap->colours->elements[i]);
-		i += 1;
-	}
+	while (i < beatmap->colours->size) free_colour(beatmap->colours->elements[i++]);
+	free(beatmap->colours);
 	i = 0;
-	while (beatmap->hitObjects->elements[i] != NULL){
-		free_hitObject(beatmap->hitObjects->elements[i]);
-		i += 1;
-	}
+	while (i < beatmap->hitObjects->size) free_hitObject(beatmap->hitObjects->elements[i++]);
+	free(beatmap->hitObjects);
 	free(beatmap);
 }
 

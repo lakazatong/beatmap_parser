@@ -9,27 +9,27 @@ typedef struct {
 	int previewTime;
 	int countdown;
 	char* sampleSet;
-	int stackLeniency;
+	float stackLeniency;
 	int mode;
-	bool letterboxInBreaks;
-	bool storyFireInFront;
-	bool useSkinSprites;
-	bool alwaysShowPlayfield;
+	int letterboxInBreaks;
+	int storyFireInFront;
+	int useSkinSprites;
+	int alwaysShowPlayfield;
 	char* overlayPosition;
 	char* skinPreference;
-	bool epilepsyWarning;
+	int epilepsyWarning;
 	int countdownOffset;
-	bool specialStyle;
-	bool widescreenStoryboard;
-	bool samplesMatchPlaybackRate;
+	int specialStyle;
+	int widescreenStoryboard;
+	int samplesMatchPlaybackRate;
 } General;
 
 typedef struct {
-	int* bookmarks;
-	int distanceSpacing;
+	iList* bookmarks;
+	float distanceSpacing;
 	int beatDivisor;
 	int gridSize;
-	int timelineZoom;
+	float timelineZoom;
 } Editor;
 
 typedef struct {
@@ -40,18 +40,18 @@ typedef struct {
 	char* creator;
 	char* version;
 	char* source;
-	List* tags; // char*
+	sList* tags; // char*
 	int beatmapID;
-	int beatmapsetID;
+	int beatmapSetID;
 } Metadata;
 
 typedef struct {
-	int hpDrainRate;
-	int circleSize;
-	int overallDifficulty;
-	int approachRate;
-	int sliderMultiplier;
-	int sliderTickRate;
+	float hpDrainRate;
+	float circleSize;
+	float overallDifficulty;
+	float approachRate;
+	float sliderMultiplier;
+	float sliderTickRate;
 } Difficulty;
 
 // ...,filename,xOffset,yOffset
@@ -83,12 +83,12 @@ typedef struct {
 // time,beatLength,meter,sampleSet,sampleIndex,volume,uninherited,effects
 typedef struct {
 	int time;
-	int beatLength;
+	float beatLength;
 	int meter;
 	int sampleSet;
 	int sampleIndex;
 	int volume;
-	bool uninherited;
+	int uninherited;
 	int effects;
 } TimingPoint;
 
@@ -120,9 +120,9 @@ typedef struct {
 	// x1:y1|x2:y2|... (?)
 	List* curvePoints; // char*
 	int slides;
-	int length;
+	float length;
 	// integer1|interger2|... (?)
-	int* edgeSounds;
+	iList* edgeSounds;
 	// normalSet1:additionSet1|normalSet2:additionSet2|... (?)
 	List* edgeSets; // char*
 } Slider;
