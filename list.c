@@ -117,7 +117,7 @@ sList* new_slist(int initial_capacity) {
 	return list;
 }
 
-void slist_add(sList* list, const char* element) {
+void slist_add(sList* list, char* element) {
 	if (list->size >= list->capacity) {
 		int new_capacity = (list->capacity == 0) ? 1 : 2 * list->capacity;
 		char** new_elements = realloc(list->elements, new_capacity * sizeof(char*));

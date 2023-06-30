@@ -2,14 +2,16 @@
 #define PARSER_H
 #include "structs.h"
 
-#define BUF_SIZE 2048
+#define BUF_SIZE 32768
 
 char* remove_chars(char* string);
 char* replace(char* string, char characters[], char target);
 char* strip(char* string);
-void substring(char* out, char* string, int start_index, int end_index);
+void substring(char** out, char* string, int start_index, int end_index);
+void subvec(char* out, char* string, int start_index, int end_index);
 void subint(int* out, char* string, int start_index, int end_index);
 void subfloat(float* out, char* string, int start_index, int end_index);
+void parse_filename(char** out, char* string);
 
 void parse_general(General* general);
 void parse_editor(Editor* editor);

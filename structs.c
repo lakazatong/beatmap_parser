@@ -7,14 +7,19 @@ General* new_general(){
 	r->audioHash = malloc(1*sizeof(char));
 	r->previewTime = -1;
 	r->countdown = 1;
-	r->sampleSet = malloc(1*sizeof(char));
+	r->sampleSet = malloc(6*sizeof(char));
+	strcpy(r->sampleSet, "Normal");
+	r->sampleSet[6] = '\0';
+	r->skinPreference = malloc(1*sizeof(char));
 	r->stackLeniency = 0.7;
 	r->mode = 0;
 	r->letterboxInBreaks = 0;
 	r->storyFireInFront = 1;
 	r->useSkinSprites = 0;
 	r->alwaysShowPlayfield = 0;
-	r->overlayPosition = malloc(1*sizeof(char));
+	r->overlayPosition = malloc(8*sizeof(char)+1);
+	strcpy(r->overlayPosition, "NoChange");
+	r->overlayPosition[8] = '\0';
 	r->skinPreference = malloc(1*sizeof(char));
 	r->epilepsyWarning = 0;
 	r->countdownOffset = 0;
@@ -51,10 +56,10 @@ Metadata* new_metadata(){
 
 Difficulty* new_difficulty(){
 	Difficulty* r = malloc(sizeof(Difficulty));
-	r->hpDrainRate = 0.0;
-	r->circleSize = 0.0;
-	r->overallDifficulty = 0.0;
-	r->approachRate = 0.0;
+	r->hpDrainRate = 5.0;
+	r->circleSize = 5.0;
+	r->overallDifficulty = 5.0;
+	r->approachRate = 5.0;
 	r->sliderMultiplier = 0.0;
 	r->sliderTickRate = 0.0;
 	return r;

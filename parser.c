@@ -59,26 +59,50 @@ char* strip(char* string) {
 	return string;
 }
 
-void substring(char* out, char* string, int start_index, int end_index) {
+void substring(char** out, char* string, int start_index, int end_index) {
 	int substring_length;
-	if (end_index == -1){ substring_length = strlen(string) - start_index;}
-	else 				{ substring_length = end_index - start_index; }
-	if (substring_length <= 0) {
-		printf("substring: substring_length negative or null\n");
-		out = NULL;
-		return;
+	if (end_index == -1) {
+		strcpy(tmp, string);
+		substring_length = strlen(remove_chars(tmp)) - start_index;
 	}
-	if (out == string) {
-		// In-place modification
-		memmove(out, out + start_index, substring_length + 1);
-	} else {
-		// Transfer to a new memory location
-		out = realloc(out, (substring_length + 1) * sizeof(char));
-		strncpy(out, string + start_index, substring_length);
-		out[substring_length] = '\0';
+	else {
+		substring_length = end_index - start_index;
 	}
+	if (substring_length < 0) {
+		printf("substring: subvec_length negative (%i)\n", substring_length);
+		exit(1);
+	}
+	if (*out == string)
+		memmove(*out, *out + start_index, substring_length);
+	else {
+		*out = realloc(*out, (substring_length + 1) * sizeof(char));
+		strncpy(*out, string + start_index, substring_length);
+	}
+	(*out)[substring_length] = '\0';
+	remove_chars(*out);
+}
+
+void subvec(char* out, char* string, int start_index, int end_index) {
+	int subvec_length;
+	if (end_index == -1) {
+		strcpy(tmp, string);
+		subvec_length = strlen(remove_chars(tmp)) - start_index;
+	}
+	else {
+		subvec_length = end_index - start_index;
+	}
+	if (subvec_length < 0) {
+		printf("subvec: subvec_length negative (%i)\n", subvec_length);
+		exit(1);
+	}
+	if (out == string)
+		memmove(out, out + start_index, subvec_length);
+	else
+		strncpy(out, string + start_index, subvec_length);
+	out[subvec_length] = '\0';
 	remove_chars(out);
 }
+
 
 void subint(int* out, char* string, int start_index, int end_index) {
 	int substring_length;
@@ -116,23 +140,35 @@ void subfloat(float* out, char* string, int start_index, int end_index) {
 	}
 }
 
+void parse_filename(char** out, char* string){
+	int string_length = strlen(string);
+	if (string[0] == '\"') {
+		string++;
+		string_length -= 2;
+	}
+	string[string_length] = '\0';
+	*out = realloc(*out, (string_length+1)*sizeof(char));
+	strncpy(*out, string, string_length);
+	(*out)[string_length] = '\0';
+}
+
 void parse_general(General* general){
-	if (strncmp(line, "AudioFilename", 13) == 0) substring(general->audioFilename, line, 15, -1);
+	if (strncmp(line, "AudioFilename", 13) == 0) substring(&(general->audioFilename), line, 15, -1);
 	else if (strncmp(line, "AudioLeadIn", 11) == 0) subint(&general->audioLeadIn, line, 13, -1);
-	else if (strncmp(line, "AudioHash", 9) == 0) substring(general->audioHash, line, 11, -1);
+	else if (strncmp(line, "AudioHash", 9) == 0) substring(&(general->audioHash), line, 11, -1);
 	else if (strncmp(line, "PreviewTime", 11) == 0) subint(&general->previewTime, line, 13, -1);
+	else if (strncmp(line, "CountdownOffset", 15) == 0) subint(&general->countdownOffset, line, 17, -1);
 	else if (strncmp(line, "Countdown", 9) == 0) subint(&general->countdown, line, 11, -1);
-	else if (strncmp(line, "SampleSet", 9) == 0) substring(general->sampleSet, line, 11, -1);
+	else if (strncmp(line, "SampleSet", 9) == 0) substring(&(general->sampleSet), line, 11, -1);
 	else if (strncmp(line, "StackLeniency", 13) == 0) subfloat(&general->stackLeniency, line, 15, -1);
 	else if (strncmp(line, "Mode", 4) == 0) subint(&general->mode, line, 6, -1);
 	else if (strncmp(line, "LetterboxInBreaks", 17) == 0) subint(&general->letterboxInBreaks, line, 19, -1);
 	else if (strncmp(line, "StoryFireInFront", 16) == 0) subint(&general->storyFireInFront, line, 18, -1);
 	else if (strncmp(line, "UseSkinSprites", 14) == 0) subint(&general->useSkinSprites, line, 16, -1);
 	else if (strncmp(line, "AlwaysShowPlayfield", 19) == 0) subint(&general->alwaysShowPlayfield, line, 21, -1);
-	else if (strncmp(line, "OverlayPosition", 15) == 0) substring(general->overlayPosition, line, 17, -1);
-	else if (strncmp(line, "SkinPreference", 14) == 0) substring(general->skinPreference, line, 16, -1);
+	else if (strncmp(line, "OverlayPosition", 15) == 0) substring(&(general->overlayPosition), line, 17, -1);
+	else if (strncmp(line, "SkinPreference", 14) == 0) substring(&(general->skinPreference), line, 16, -1);
 	else if (strncmp(line, "EpilepsyWarning", 15) == 0) subint(&general->epilepsyWarning, line, 17, -1);
-	else if (strncmp(line, "CountdownOffset", 15) == 0) subint(&general->countdownOffset, line, 17, -1);
 	else if (strncmp(line, "SpecialStyle", 12) == 0) subint(&general->specialStyle, line, 14, -1);
 	else if (strncmp(line, "WidescreenStoryboard", 20) == 0) subint(&general->widescreenStoryboard, line, 22, -1);
 	else if (strncmp(line, "SamplesMatchPlaybackRate", 24) == 0) subint(&general->samplesMatchPlaybackRate, line, 26, -1);
@@ -144,7 +180,7 @@ void parse_general(General* general){
 
 void parse_editor(Editor* editor){
 	if (strncmp(line, "Bookmarks", 9) == 0) {
-		substring(line, line, 11, -1);
+		subvec(line, line, 11, -1);
 		char* bookmark;
 		bookmark = strtok(line, ",");
 		while (bookmark != NULL) {
@@ -163,23 +199,21 @@ void parse_editor(Editor* editor){
 	else if (strncmp(line, "GridSize", 8) == 0) subint(&editor->gridSize, line, 10, -1);
 	else if (strncmp(line, "TimelineZoom", 12) == 0) subfloat(&editor->timelineZoom, line, 14, -1);
 	else{
-		printf("parse_editor: impossible case reached\n");
-		exit(0);
+		printf("parse_editor: impossible case reached (%s)\n", line);
+		exit(1);
 	}
 }
 
 void parse_metadata(Metadata* metadata){
-	if (strncmp(line, "Title", 5) == 0) substring(metadata->title, line, 6, -1);
-	else if (strncmp(line, "TitleUnicode", 12) == 0) substring(metadata->titleUnicode, line, 13, -1);
-	else if (strncmp(line, "Artist", 6) == 0) substring(metadata->artist, line, 7, -1);
-	else if (strncmp(line, "ArtistUnicode", 13) == 0) substring(metadata->artistUnicode, line, 14, -1);
-	else if (strncmp(line, "Creator", 7) == 0) substring(metadata->creator, line, 8, -1);
-	else if (strncmp(line, "Version", 7) == 0) substring(metadata->version, line, 8, -1);
-	else if (strncmp(line, "Source", 6) == 0) substring(metadata->source, line, 7, -1);
+	if (strncmp(line, "Title:", 6) == 0) substring(&(metadata->title), line, 6, -1);
+	else if (strncmp(line, "TitleUnicode:", 13) == 0) substring(&(metadata->titleUnicode), line, 13, -1);
+	else if (strncmp(line, "Artist:", 7) == 0) substring(&(metadata->artist), line, 7, -1);
+	else if (strncmp(line, "ArtistUnicode:", 14) == 0) substring(&(metadata->artistUnicode), line, 14, -1);
+	else if (strncmp(line, "Creator", 7) == 0) substring(&(metadata->creator), line, 8, -1);
+	else if (strncmp(line, "Version", 7) == 0) substring(&(metadata->version), line, 8, -1);
+	else if (strncmp(line, "Source", 6) == 0) substring(&(metadata->source), line, 7, -1);
 	else if (strncmp(line, "Tags", 4) == 0) {
-		strcpy(unwanted, "\r\n"); unwanted_size = 2;
-		substring(line, line, 5, -1);
-		strcpy(unwanted, " \r\n"); unwanted_size = 3;
+		subvec(line, line, 5, -1);
 		char* tag;
 		tag = strtok(line, " ");
 		while (tag != NULL) {
@@ -191,7 +225,7 @@ void parse_metadata(Metadata* metadata){
 	else if (strncmp(line, "BeatmapSetID", 12) == 0) subint(&metadata->beatmapSetID, line, 13, -1);
 	else{
 		printf("parse_metadata: impossible case reached\n");
-		exit(0);
+		exit(1);
 	}
 }
 
@@ -204,7 +238,7 @@ void parse_difficulty(Difficulty* difficulty){
 	else if (strncmp(line, "SliderTickRate", 14) == 0) subfloat(&difficulty->sliderTickRate, line, 15, -1);
 	else{
 		printf("parse_difficulty: impossible case reached\n");
-		exit(0);
+		exit(1);
 	}
 	return;
 }
@@ -214,19 +248,12 @@ void parse_backgroundEvent(Event* event){
 	event->type = 0;
 	event->event = new_backgroundEvent();
 	BackgroundEvent* cur_event = (BackgroundEvent*)event->event;
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		printf("parse_backgroundEvent: incomplete event, missing filename\n");
 		return;
 	}
-	strcpy(cur_event->filename, token);
-	if (cur_event->filename[0] == '\"') {
-		strcpy(unwanted, "\""); unwanted_size = 1;
-		remove_chars(cur_event->filename);
-		strcpy(unwanted, " \r\n"); unwanted_size = 3;
-	}
-	
+	parse_filename(&(cur_event->filename), token);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		cur_event->xOffset = 0;
@@ -234,37 +261,28 @@ void parse_backgroundEvent(Event* event){
 		return;
 	}
 	subint(&cur_event->xOffset, token, 0, -1);
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		cur_event->yOffset = 0;
 		return;
 	}
 	subint(&cur_event->yOffset, token, 0, -1);
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) return;
 	printf("parse_backgroundEvent: impossible case reached\n");
-	exit(0);
+	exit(1);
 }
 void parse_videoEvent(Event* event){
 	char* token;
 	event->type = 1;
 	event->event = new_videoEvent();
 	VideoEvent* cur_event = (VideoEvent*)event->event;
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		printf("parse_videoEvent: incomplete event, missing filename\n");
 		return;
 	}
-	strcpy(cur_event->filename, token);
-	if (cur_event->filename[0] == '\"') {
-		strcpy(unwanted, "\""); unwanted_size = 1;
-		remove_chars(cur_event->filename);
-		strcpy(unwanted, " \r\n"); unwanted_size = 3;
-	}
-	
+	parse_filename(&(cur_event->filename), token);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		cur_event->xOffset = 0;
@@ -272,36 +290,32 @@ void parse_videoEvent(Event* event){
 		return;
 	}
 	subint(&cur_event->xOffset, token, 0, -1);
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		cur_event->yOffset = 0;
 		return;
 	}
 	subint(&cur_event->yOffset, token, 0, -1);
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) return;
 	printf("parse_videoEvent: impossible case reached\n");
-	exit(0);
+	exit(1);
 }
 void parse_breakEvent(Event* event){
 	char* token;
 	event->type = 2;
 	event->event = new_breakEvent();
 	BreakEvent* cur_event = (BreakEvent*)event->event;
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) {
 		printf("parse_breakEvent: incomplete event, missing endTime\n");
 		return;
 	}
 	subint(&cur_event->endTime, token, 0, -1);
-	
 	token = strtok(NULL, ",");
 	if (token == NULL) return;
 	printf("parse_backgroundEvent: impossible case reached\n");
-	exit(0);
+	exit(1);
 }
 
 void parse_events(List* events){
@@ -320,7 +334,7 @@ void parse_events(List* events){
 		else if (strncmp(buf, "2", 1) == 0) parse_breakEvent(event);
 		else {
 			printf("parse_events: impossible case1 reached (%s)\n", buf);
-			exit(0);
+			exit(1);
 		}
 	} else {
 		if (strncmp(buf, "Background", 10) == 0) parse_backgroundEvent(event);
@@ -328,7 +342,7 @@ void parse_events(List* events){
 		else if (strncmp(buf, "Break", 5) == 0) parse_breakEvent(event);
 		else {
 			printf("parse_events: impossible case2 reached (%s)\n", buf);
-			exit(0);
+			exit(1);
 		}
 	}
 	list_add(events, event);
@@ -391,7 +405,7 @@ void parse_timingPoints(List* timingPoints){
 		return;
 	}
 	printf("parse_timingPoints: impossible case reached\n");
-	exit(0);
+	exit(1);
 }
 
 void parse_colours(List* colours){
@@ -404,7 +418,7 @@ void parse_colours(List* colours){
 		char* found = strchr(line, ':');
 		if (found == NULL) {
 			printf("parse_colours: impossible case reached\n");
-			exit(0);
+			exit(1);
 		}
 		size_t end_index = found - line;
 		subint(&((ComboColour*)colour->object)->combo, line, 5, end_index-1);
@@ -420,9 +434,9 @@ void parse_colours(List* colours){
 	}
 	else{
 		printf("parse_colours: impossible case reached\n");
-		exit(0);
+		exit(1);
 	}
-	substring(line, line, colour_start, -1);
+	subvec(line, line, colour_start, -1);
 	token = strtok(line, ",");
 	if (token == NULL) {
 		printf("parse_colours: incomplete colour object, missing red\n");
@@ -441,18 +455,17 @@ void parse_colours(List* colours){
 		return;
 	}
 	subint(&colour->blue, token, 0, -1);
-	token = strtok(NULL, ",");
-	if (token == NULL) {
-		list_add(colours, colour);
-		return;
+	list_add(colours, colour);
+	if (strtok(NULL, ",") != NULL){
+		printf("parse_colours: impossible case reached\n");
+		exit(1);
 	}
-	printf("parse_colours: impossible case reached\n");
 }
 
 char* parse_curvePoint(Slider* slider, char* token){
 	char* colon = strchr(token, ':');
 	if (colon == NULL) {
-		printf("parse_curvePoint: wrong CurvePoint format\n");
+		printf("parse_curvePoint: wrong CurvePoint format (%s)\n", token);
 		exit(1);
 	}
 	CurvePoint* curvePoint = new_curvePoint();
@@ -478,8 +491,8 @@ char* parse_edgeSet(Slider* slider, char* token){
 	}
 	EdgeSet* edgeSet = new_edgeSet();
 	int end_index = colon - token;
-	substring(edgeSet->normalSet, token, 0, end_index);
-	substring(edgeSet->additionSet, token, end_index+1, -1);
+	substring(&(edgeSet->normalSet), token, 0, end_index);
+	substring(&(edgeSet->additionSet), token, end_index+1, -1);
 	list_add(slider->edgeSets, edgeSet);
 	return strtok(NULL, "|");
 }
@@ -494,7 +507,7 @@ void parse_hitSample(HitObject* hitObject, char* token){
 	token = strtok(NULL, ":"); if (token == NULL) return;
 	subint(&hitObject->hitSample->volume, token, 0, -1);
 	token = strtok(NULL, "");
-	strcpy(hitObject->hitSample->filename, remove_chars(token));
+	parse_filename(&(hitObject->hitSample->filename), token);
 }
 
 char* parse_slider(HitObject* hitObject){
@@ -618,6 +631,17 @@ void parse_hitObjects(List* hitObjects){
 	list_add(hitObjects, hitObject);
 }
 
+// #define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_LINE 33
+int debug_function(int line_count){
+	printf("%s", line);
+	if (line_count+2 > DEBUG_LINE) exit(0);
+	return line_count+1;
+}
+#endif
+
 Beatmap* parse_beatmap(char* osuFile){
 	strcpy(unwanted, " \r\n");
 	unwanted_size = 3;
@@ -627,15 +651,22 @@ Beatmap* parse_beatmap(char* osuFile){
 		return NULL;
 	}
 	Beatmap* beatmap = new_beatmap();
+	#ifdef DEBUG
+	int line_count = 0;
+	#endif
 	while (fgets(line, sizeof(line), file)) {
+		#ifdef DEBUG
+		line_count = debug_function(line_count);
+		#endif
 		if (line[1] == '\n' || (line[0] == '/' && line[1] == '/')) continue;
 		else if (strncmp(line, "osu file format v", 17) == 0) {
-			if (line[17] != '1' || line[18] != '4'){
-				printf("parse_beatmap: does not support other osu file format than 14\n");
-			}
+			if (line[17] != '1' || line[18] != '4') printf("parse_beatmap: does not support other osu file format than 14\n");
 		}
 		else if (strncmp(line, "[General]", 9) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
@@ -644,6 +675,9 @@ Beatmap* parse_beatmap(char* osuFile){
 		}
 		else if (strncmp(line, "[Editor]", 8) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
@@ -651,15 +685,23 @@ Beatmap* parse_beatmap(char* osuFile){
 			}
 		}
 		else if (strncmp(line, "[Metadata]", 10) == 0) {
+			strcpy(unwanted, "\r\n"); unwanted_size = 2;
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
 					parse_metadata(beatmap->metadata);
 			}
+			strcpy(unwanted, " \r\n"); unwanted_size = 3;
 		}
 		else if (strncmp(line, "[Difficulty]", 12) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
@@ -668,6 +710,9 @@ Beatmap* parse_beatmap(char* osuFile){
 		}
 		else if (strncmp(line, "[Events]", 8) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
@@ -676,6 +721,9 @@ Beatmap* parse_beatmap(char* osuFile){
 		}
 		else if (strncmp(line, "[TimingPoints]", 14) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
@@ -683,15 +731,23 @@ Beatmap* parse_beatmap(char* osuFile){
 			}
 		}
 		else if (strncmp(line, "[Colours]", 9) == 0) {
+			strcpy(unwanted, "\r\n"); unwanted_size = 2;
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
 					parse_colours(beatmap->colours);
 			}
+			strcpy(unwanted, " \r\n"); unwanted_size = 3;
 		}
 		else if (strncmp(line, "[HitObjects]", 12) == 0) {
 			while (fgets(line, sizeof(line), file)) {
+				#ifdef DEBUG
+				line_count = debug_function(line_count);
+				#endif
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')

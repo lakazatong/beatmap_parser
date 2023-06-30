@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter
+CFLAGS = -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
 SRC_FILES = $(wildcard *.c)
 O_FILES = $(patsubst %.c, %.o, $(SRC_FILES))
 

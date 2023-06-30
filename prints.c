@@ -51,10 +51,10 @@ void printEditor(const Editor* editor) {
 		printf("NULL\n");
 	else
 		print_int_list(editor->bookmarks->elements, editor->bookmarks->size);
-	printf("Distance Spacing: %f\n", editor->distanceSpacing);
+	printf("Distance Spacing: %0.2f\n", editor->distanceSpacing);
 	printf("Beat Divisor: %d\n", editor->beatDivisor);
 	printf("Grid Size: %d\n", editor->gridSize);
-	printf("Timeline Zoom: %f\n\n", editor->timelineZoom);
+	printf("Timeline Zoom: %0.2f\n\n", editor->timelineZoom);
 }
 
 void printMetadata(const Metadata* metadata) {
