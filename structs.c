@@ -1,6 +1,6 @@
 #include "structs.h"
 
-General* new_general(){
+General* new_general() {
 	General* r = malloc(sizeof(General));
 	r->audioFilename = malloc(1*sizeof(char));
 	r->audioLeadIn = 0;
@@ -29,7 +29,7 @@ General* new_general(){
 	return r;
 }
 
-Editor* new_editor(){
+Editor* new_editor() {
 	Editor* r = malloc(sizeof(Editor));
 	r->bookmarks = new_ilist(0);
 	r->distanceSpacing = 0.0;
@@ -39,7 +39,7 @@ Editor* new_editor(){
 	return r;
 }
 
-Metadata* new_metadata(){
+Metadata* new_metadata() {
 	Metadata* r = malloc(sizeof(Metadata));
 	r->title = malloc(1*sizeof(char));
 	r->titleUnicode = malloc(1*sizeof(char));
@@ -54,7 +54,7 @@ Metadata* new_metadata(){
 	return r;
 }
 
-Difficulty* new_difficulty(){
+Difficulty* new_difficulty() {
 	Difficulty* r = malloc(sizeof(Difficulty));
 	r->hpDrainRate = 5.0;
 	r->circleSize = 5.0;
@@ -65,7 +65,7 @@ Difficulty* new_difficulty(){
 	return r;
 }
 
-BackgroundEvent* new_backgroundEvent(){
+BackgroundEvent* new_backgroundEvent() {
 	BackgroundEvent* r = malloc(sizeof(BackgroundEvent));
 	r->filename = malloc(1*sizeof(char));
 	r->xOffset = 0;
@@ -73,7 +73,7 @@ BackgroundEvent* new_backgroundEvent(){
 	return r;
 }
 
-VideoEvent* new_videoEvent(){
+VideoEvent* new_videoEvent() {
 	VideoEvent* r = malloc(sizeof(VideoEvent));
 	r->filename = malloc(1*sizeof(char));
 	r->xOffset = 0;
@@ -81,13 +81,13 @@ VideoEvent* new_videoEvent(){
 	return r;
 }
 
-BreakEvent* new_breakEvent(){
+BreakEvent* new_breakEvent() {
 	BreakEvent* r = malloc(sizeof(BreakEvent));
 	r->endTime = 0;
 	return r;
 }
 
-Event* new_event(){
+Event* new_event() {
 	Event* r = malloc(sizeof(Event));
 	r->type = 0;
 	r->startTime = 0;
@@ -95,7 +95,7 @@ Event* new_event(){
 	return r;
 }
 
-TimingPoint* new_timingPoint(){
+TimingPoint* new_timingPoint() {
 	TimingPoint* r = malloc(sizeof(TimingPoint));
 	r->time = 0;
 	r->beatLength = 0.0;
@@ -108,13 +108,13 @@ TimingPoint* new_timingPoint(){
 	return r;
 }
 
-BeatmapComboColour* new_beatmapComboColour(){
+BeatmapComboColour* new_beatmapComboColour() {
 	BeatmapComboColour* r = malloc(sizeof(BeatmapComboColour));
 	r->combo = 0;
 	return r;
 }
 
-BeatmapColour* new_beatmapColour(){
+BeatmapColour* new_beatmapColour() {
 	BeatmapColour* r = malloc(sizeof(BeatmapColour));
 	r->type = 0;
 	r->red = 0;
@@ -124,7 +124,7 @@ BeatmapColour* new_beatmapColour(){
 	return r;
 }
 
-HitSound* new_hitSound(){
+HitSound* new_hitSound() {
 	HitSound* r = malloc(sizeof(HitSound));
 	r->normal = 1;
 	r->whistle = 0;
@@ -133,7 +133,7 @@ HitSound* new_hitSound(){
 	return r;
 }
 
-HitSample* new_hitSample(){
+HitSample* new_hitSample() {
 	HitSample* r = malloc(sizeof(HitSample));
 	r->normalSet = 0;
 	r->additionSet = 0;
@@ -143,21 +143,21 @@ HitSample* new_hitSample(){
 	return r;
 }
 
-CurvePoint* new_curvePoint(){
+CurvePoint* new_curvePoint() {
 	CurvePoint* r = malloc(sizeof(CurvePoint));
 	r->x = 0;
 	r->y = 0;
 	return r;
 }
 
-EdgeSet* new_edgeSet(){
+EdgeSet* new_edgeSet() {
 	EdgeSet* r = malloc(sizeof(EdgeSet));
 	r->normalSet = NULL;
 	r->additionSet = NULL;
 	return r;
 }
 
-Slider* new_slider(){
+Slider* new_slider() {
 	Slider* r = malloc(sizeof(Slider));
 	r->curveType = 0;
 	r->curvePoints = new_list(0);
@@ -168,19 +168,19 @@ Slider* new_slider(){
 	return r;
 }
 
-Spinner* new_spinner(){
+Spinner* new_spinner() {
 	Spinner* r = malloc(sizeof(Spinner));
 	r->endTime = 0;
 	return r;
 }
 
-Hold* new_hold(){
+Hold* new_hold() {
 	Hold* r = malloc(sizeof(Hold));
 	r->endTime = 0;
 	return r;
 }
 
-HitObject* new_hitObject(){
+HitObject* new_hitObject() {
 	HitObject* r = malloc(sizeof(HitObject));
 	r->x = 0;
 	r->y = 0;
@@ -194,7 +194,7 @@ HitObject* new_hitObject(){
 	return r;
 }
 
-Beatmap* new_beatmap(){
+Beatmap* new_beatmap() {
 	Beatmap* r = malloc(sizeof(Beatmap));
 	r->general = new_general();
 	r->editor = new_editor();
