@@ -19,6 +19,12 @@ typedef struct {
 } iList;
 
 typedef struct {
+	double* elements;
+	int size;
+	int capacity;
+} dList;
+
+typedef struct {
 	char** elements;
 	int size;
 	int capacity;
@@ -33,6 +39,11 @@ iList* new_ilist(int initial_capacity);
 void ilist_add(iList* list, int element);
 int ilist_pop(iList* list, int index);
 void free_ilist(iList* list);
+
+dList* new_dlist(int initial_capacity);
+void dlist_add(dList* list, int element);
+int dlist_pop(dList* list, int index);
+void free_dlist(dList* list);
 
 sList* new_slist(int initial_capacity);
 void slist_add(sList* list, char* element);
