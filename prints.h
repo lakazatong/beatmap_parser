@@ -1,5 +1,5 @@
-#ifndef PRINTS_H
-#define PRINTS_H
+#ifndef BEATMAP_PARSER_PRINTS_H
+#define BEATMAP_PARSER_PRINTS_H
 #include "structs.h"
 
 void print_int_list(int* list, int size);

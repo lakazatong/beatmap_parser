@@ -1,5 +1,5 @@
-#ifndef STRUCTS_H
-#define STRUCTS_H
+#ifndef BEATMAP_PARSER_STRUCTS_H
+#define BEATMAP_PARSER_STRUCTS_H
 #include "list.h"
 
 typedef struct {
