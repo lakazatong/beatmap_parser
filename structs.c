@@ -248,10 +248,12 @@ void free_videoEvent(VideoEvent* videoEvent){
 }
 
 void free_event(Event* event){
-	if (event->type == 0) free_backgroundEvent((BackgroundEvent*)event->event);
-	else if (event->type == 1) free_videoEvent((VideoEvent*)event->event);
-	else
-		free(event->event);
+	if (event->event != NULL){
+		if (event->type == 0) free_backgroundEvent((BackgroundEvent*)event->event);
+		else if (event->type == 1) free_videoEvent((VideoEvent*)event->event);
+		else
+			free(event->event);
+	}
 	free(event);
 }
 
@@ -260,7 +262,9 @@ void free_timingPoint(TimingPoint* timingPoint){
 }
 
 void free_beatmapColour(BeatmapColour* beatmapColour){
-	if (beatmapColour->type == 0) free(beatmapColour->object);
+	if (beatmapColour->object != NULL){
+		if (beatmapColour->type == 0) free(beatmapColour->object);
+	}
 	free(beatmapColour);
 }
 
@@ -277,12 +281,14 @@ void free_slider(Slider* slider){
 }
 
 void free_hitObject(HitObject* hitObject){
-	if (hitObject->type == 1)
-		free_slider((Slider*)hitObject->object);
-	else if (hitObject->type != 0)
-		free(hitObject->object);
-	free(hitObject->hitSound);
-	free_hitSample(hitObject->hitSample);
+	if (hitObject->object != NULL){
+		if (hitObject->type == 1)
+			free_slider((Slider*)hitObject->object);
+		else if (hitObject->type != 0)
+			free(hitObject->object);
+	}
+	if (hitObject->hitSound != NULL) free(hitObject->hitSound);
+	if (hitObject->hitSample != NULL) free_hitSample(hitObject->hitSample);
 	free(hitObject);
 }
 
