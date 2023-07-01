@@ -408,56 +408,56 @@ void parse_timingPoints(List* timingPoints){
 	exit(1);
 }
 
-void parse_colours(List* colours){
+void parse_beatmapColours(List* beatmapColours){
 	char* token;
-	Colour* colour = new_colour();
-	int colour_start = 0;
+	BeatmapColour* beatmapColour = new_beatmapColour();
+	int beatmapColour_start = 0;
 	if (strncmp(line, "Combo", 5) == 0) {
-		colour->type = 0;
-		colour->object = new_comboColour();
+		beatmapColour->type = 0;
+		beatmapColour->object = new_beatmapComboColour();
 		char* found = strchr(line, ':');
 		if (found == NULL) {
-			printf("parse_colours: impossible case reached\n");
+			printf("parse_beatmapColours: impossible case reached\n");
 			exit(1);
 		}
 		size_t end_index = found - line;
-		subint(&((ComboColour*)colour->object)->combo, line, 5, end_index-1);
-		colour_start = end_index+2;
+		subint(&((BeatmapComboColour*)beatmapColour->object)->combo, line, 5, end_index-1);
+		beatmapColour_start = end_index+2;
 	}
 	else if (strncmp(line, "SliderTrackOverride", 19) == 0) {
-		colour->type = 1;
-		colour_start = 22;
+		beatmapColour->type = 1;
+		beatmapColour_start = 22;
 	}
 	else if (strncmp(line, "SliderBorder", 12) == 0) {
-		colour->type = 2;
-		colour_start = 15;
+		beatmapColour->type = 2;
+		beatmapColour_start = 15;
 	}
 	else{
-		printf("parse_colours: impossible case reached\n");
+		printf("parse_beatmapColours: impossible case reached\n");
 		exit(1);
 	}
-	subvec(line, line, colour_start, -1);
+	subvec(line, line, beatmapColour_start, -1);
 	token = strtok(line, ",");
 	if (token == NULL) {
-		printf("parse_colours: incomplete colour object, missing red\n");
+		printf("parse_beatmapColours: incomplete BeatmapColour object, missing red\n");
 		return;
 	}
-	subint(&colour->red, token, 0, -1);
+	subint(&beatmapColour->red, token, 0, -1);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_colours: incomplete colour object, missing green\n");
+		printf("parse_beatmapColours: incomplete BeatmapColour object, missing green\n");
 		return;
 	}
-	subint(&colour->green, token, 0, -1);
+	subint(&beatmapColour->green, token, 0, -1);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_colours: incomplete colour object, missing blue\n");
+		printf("parse_beatmapColours: incomplete BeatmapColour object, missing blue\n");
 		return;
 	}
-	subint(&colour->blue, token, 0, -1);
-	list_add(colours, colour);
+	subint(&beatmapColour->blue, token, 0, -1);
+	list_add(beatmapColours, beatmapColour);
 	if (strtok(NULL, ",") != NULL){
-		printf("parse_colours: impossible case reached\n");
+		printf("parse_beatmapColours: impossible case reached\n");
 		exit(1);
 	}
 }
@@ -739,7 +739,7 @@ Beatmap* parse_beatmap(char* osuFile){
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
-					parse_colours(beatmap->colours);
+					parse_beatmapColours(beatmap->beatmapColours);
 			}
 			strcpy(unwanted, " \r\n"); unwanted_size = 3;
 		}

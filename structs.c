@@ -108,14 +108,14 @@ TimingPoint* new_timingPoint(){
 	return r;
 }
 
-ComboColour* new_comboColour(){
-	ComboColour* r = malloc(sizeof(ComboColour));
+BeatmapComboColour* new_beatmapComboColour(){
+	BeatmapComboColour* r = malloc(sizeof(BeatmapComboColour));
 	r->combo = 0;
 	return r;
 }
 
-Colour* new_colour(){
-	Colour* r = malloc(sizeof(Colour));
+BeatmapColour* new_beatmapColour(){
+	BeatmapColour* r = malloc(sizeof(BeatmapColour));
 	r->type = 0;
 	r->red = 0;
 	r->green = 0;
@@ -202,7 +202,7 @@ Beatmap* new_beatmap(){
 	r->difficulty = new_difficulty();
 	r->events = new_list(0);
 	r->timingPoints = new_list(0);
-	r->colours = new_list(0);
+	r->beatmapColours = new_list(0);
 	r->hitObjects = new_list(0);
 	return r;
 }
@@ -259,9 +259,9 @@ void free_timingPoint(TimingPoint* timingPoint){
 	free(timingPoint);
 }
 
-void free_colour(Colour* colour){
-	if (colour->type == 0) free(colour->object);
-	free(colour);
+void free_beatmapColour(BeatmapColour* beatmapColour){
+	if (beatmapColour->type == 0) free(beatmapColour->object);
+	free(beatmapColour);
 }
 
 void free_hitSample(HitSample* hitSample){
@@ -298,8 +298,8 @@ void free_beatmap(Beatmap* beatmap){
 	while (i < beatmap->timingPoints->size) free_timingPoint(beatmap->timingPoints->elements[i++]);
 	free(beatmap->timingPoints);
 	i = 0;
-	while (i < beatmap->colours->size) free_colour(beatmap->colours->elements[i++]);
-	free(beatmap->colours);
+	while (i < beatmap->beatmapColours->size) free_beatmapColour(beatmap->beatmapColours->elements[i++]);
+	free(beatmap->beatmapColours);
 	i = 0;
 	while (i < beatmap->hitObjects->size) free_hitObject(beatmap->hitObjects->elements[i++]);
 	free(beatmap->hitObjects);

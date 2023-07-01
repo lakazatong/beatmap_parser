@@ -89,25 +89,25 @@ typedef struct {
 
 typedef struct {
 	int combo;
-} ComboColour;
+} BeatmapComboColour;
 
 /* no additional params
 typedef struct {
 
-} SliderTrackOverrideColour; */
+} BeatmapSliderTrackOverrideColour; */
 
 /* no additional params
 typedef struct {
 
-} SliderBorderColour; */
+} BeatmapSliderBorderColour; */
 
 typedef struct {
-	int type; // 0 ComboColour 1 SliderTrackOverrideColour 2 SliderBorderColour
+	int type; // 0 BeatmapComboColour 1 BeatmapSliderTrackOverrideColour 2 BeatmapbeatmapSliderTrackOverrideColour
 	int red;
 	int green;
 	int blue;
 	void* object;
-} Colour;
+} BeatmapColour;
 
 typedef struct {
 	int normal;
@@ -178,7 +178,7 @@ typedef struct {
 	Difficulty* difficulty;
 	List* events; // Event*
 	List* timingPoints; // TimingPoint*
-	List* colours; // Colour*
+	List* beatmapColours; // BeatmapColour*
 	List* hitObjects; // HitObject*
 } Beatmap;
 
@@ -193,8 +193,8 @@ VideoEvent* new_videoEvent();
 BreakEvent* new_breakEvent();
 Event* new_event();
 TimingPoint* new_timingPoint();
-ComboColour* new_comboColour();
-Colour* new_colour();
+BeatmapComboColour* new_beatmapComboColour();
+BeatmapColour* new_beatmapColour();
 HitSound* new_hitSound();
 HitSample* new_hitSample();
 CurvePoint* new_curvePoint();
@@ -213,7 +213,7 @@ void free_videoEvent(VideoEvent* videoEvent);
 void free_breakEvent(BreakEvent* breakEvent);
 void free_event(Event* event);
 void free_timingPoint(TimingPoint* timingPoint);
-void free_colour(Colour* colour);
+void free_beatmapColour(BeatmapColour* beatmapColour);
 void free_hitSample(HitSample* hitSample);
 void free_slider(Slider* slider);
 void free_spinner(Spinner* spinner);
