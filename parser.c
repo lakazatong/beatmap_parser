@@ -6,7 +6,6 @@ char line[BUF_SIZE]; // buffer for the current line
 char buf[BUF_SIZE]; // buffer for parse functions
 char tmp[BUF_SIZE]; // temporary buffer for utils functions
 
-// Source: ChatGPT
 char* remove_chars(char* string) {
 	if (string == NULL || unwanted == NULL) return NULL;
 	size_t length = strlen(string);
@@ -28,34 +27,6 @@ char* remove_chars(char* string) {
 			i--;
 		}
 	}
-	return string;
-}
-
-char* replace(char* string, char characters[], char target) {
-	if (string == NULL || characters == NULL) return NULL;
-	size_t length = strlen(string);
-	size_t char_length = strlen(characters);
-	for (size_t i = 0; i < length; i++)
-		for (size_t j = 0; j < char_length; j++)
-			if (string[i] == characters[j])
-				string[i] = target;
-	return string;
-}
-
-char* strip(char* string) {
-	size_t length = strlen(string);
-	printf("length=%zu\n", length);
-	if (length == 0) {
-		printf("strip: null length\n");
-		return string;
-	}
-	char* start = string;
-	char* end = string + length - 1;
-	while (start <= end && (*start == ' ' || *start == '\n' || *start == '\r')) start++;
-	while (end >= start && (*end == ' ' || *end == '\n' || *end == '\r')) end--;
-	size_t trimmed_length = (end - start) + 1;
-	memmove(string, start, trimmed_length);
-	string[trimmed_length] = '\0';
 	return string;
 }
 
@@ -506,7 +477,7 @@ void parse_hitSample(HitObject* hitObject, char* token){
 	subint(&hitObject->hitSample->index, token, 0, -1);
 	token = strtok(NULL, ":"); if (token == NULL) return;
 	subint(&hitObject->hitSample->volume, token, 0, -1);
-	token = strtok(NULL, "");
+	token = strtok(NULL, ""); if (strncmp(token, "\r\n", 2) == 0) return;
 	parse_filename(&(hitObject->hitSample->filename), token);
 }
 
@@ -627,6 +598,7 @@ void parse_hitObjects(List* hitObjects){
 		printf("parse_hitObjects: unkown type (%i)\n", type);
 		return;
 	}
+	hitObject->hitSample->filename = NULL;
 	parse_hitSample(hitObject, next_token);
 	list_add(hitObjects, hitObject);
 }
@@ -660,7 +632,8 @@ Beatmap* parse_beatmap(char* osuFile){
 		#endif
 		if (line[1] == '\n' || (line[0] == '/' && line[1] == '/')) continue;
 		else if (strncmp(line, "osu file format v", 17) == 0) {
-			if (line[17] != '1' || line[18] != '4') printf("parse_beatmap: does not support other osu file format than 14\n");
+			if (line[17] != '1' || line[18] != '4')
+				printf("parse_beatmap: does not support other osu file format than 14 (unsure yet, safety first)\n");
 		}
 		else if (strncmp(line, "[General]", 9) == 0) {
 			while (fgets(line, sizeof(line), file)) {
