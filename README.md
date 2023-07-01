@@ -1,19 +1,22 @@
-# c_utils
-C utils I like to have.
+# beatmap_parser
+Parses .osu files.
 ## Add to your repo
 In your repo root folder
-* `git submodule add https://github.com/lakazatong/c_utils libs/c_utils`
+* `git submodule add https://github.com/lakazatong/beatmap_parser libs/beatmap_parser`
 ## Include
 In your repo
-* `#include "libs/c_utils/utils/all.h"`
+* `#include "libs/beatmap_parser/parser.h"`
 
 In the libs folder
-* `#include "../c_utils/utils/all.h"`
+* `#include "../beatmap_parser/parser.h"`
 
 ## Run isolated test
+Uncomment test.c and write your tests, then run:
+
 `make && test.exe`
 
-You would need a way to run make on Windows. Remove the .exe extension in the Makefile for Linux.
+You would need a way to run make on Windows.
+Remove the .exe extension in the Makefile for Linux.
 ## Update your submodules
 * `git submodule update --remote --merge`
 ## Remove a submodule
