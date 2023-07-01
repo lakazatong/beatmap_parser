@@ -1,4 +1,5 @@
 gen.py
 *.o
-*test*
 *.osu
+test.exe*
+test
