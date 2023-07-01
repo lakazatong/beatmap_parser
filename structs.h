@@ -1,6 +1,6 @@
 #ifndef BEATMAP_PARSER_STRUCTS_H
 #define BEATMAP_PARSER_STRUCTS_H
-#include "list.h"
+#include "libs/c_utils/utils/all.h"
 
 typedef struct {
 	char* audioFilename;
@@ -181,8 +181,6 @@ typedef struct {
 	List* beatmapColours; // BeatmapColour*
 	List* hitObjects; // HitObject*
 } Beatmap;
-
-// generated prototypes
 
 General* new_general();
 Editor* new_editor();

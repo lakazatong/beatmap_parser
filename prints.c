@@ -156,24 +156,24 @@ void printTimingPoints(const List* timingPoints) {
 	printf("\n");
 }
 
-void printColour(const Colour* colour) {
-	printf("Type: %d\n", colour->type);
-	printf("Red: %d\n", colour->red);
-	printf("Green: %d\n", colour->green);
-	printf("Blue: %d\n", colour->blue);
-	if (colour->type == 0) printf("Combo: %d\n", ((ComboColour*)colour->object)->combo);
+void printBeatmapColour(const BeatmapColour* beatmapColour) {
+	printf("Type: %d\n", beatmapColour->type);
+	printf("Red: %d\n", beatmapColour->red);
+	printf("Green: %d\n", beatmapColour->green);
+	printf("Blue: %d\n", beatmapColour->blue);
+	if (beatmapColour->type == 0) printf("Combo: %d\n", ((BeatmapComboColour*)beatmapColour->object)->combo);
 }
 
-void printColours(const List* colours) {
-	if (colours == NULL || colours->elements == NULL) {
-		printf("Invalid Colour list.\n");
+void printBeatmapColours(const List* beatmapColours) {
+	if (beatmapColours == NULL || beatmapColours->elements == NULL) {
+		printf("Invalid BeatmapColour list.\n");
 		return;
 	}
-	int size = colours->size;
-	printf("Colours (%d):\n\n", size);
+	int size = beatmapColours->size;
+	printf("BeatmapColours (%d):\n\n", size);
 	for (int i = 0; i < size; i++) {
-		Colour* colour = (Colour*)colours->elements[i];
-		printColour(colour);
+		BeatmapColour* beatmapColour = (BeatmapColour*)beatmapColours->elements[i];
+		printBeatmapColour(beatmapColour);
 		printf("\n");
 	}
 	printf("\n");

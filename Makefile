@@ -1,15 +1,18 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
-SRC_FILES = $(wildcard *.c)
-O_FILES = $(patsubst %.c, %.o, $(SRC_FILES))
+rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+SRC_FILES := $(call rwildcard,.,*.c)
+OBJ_DIR := obj
+O_FILES := $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 all: test
 
 test: $(O_FILES)
 	$(CC) $(CFLAGS) -o test.exe $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o test
+	rm -rf $(OBJ_DIR) test.exe
