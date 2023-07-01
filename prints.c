@@ -1,27 +1,6 @@
 #include "prints.h"
 
-void print_int_list(int* list, int size) {
-	printf("[");
-	for (int i = 0; i < size; i++) {
-		printf("%d", list[i]);
-		if (i < size - 1) {
-			printf(", ");
-		}
-	}
-	printf("]\n");
-}
-void print_string_list(char** list, int size) {
-	printf("[");
-	for (int i = 0; i < size; i++) {
-		printf("%s", list[i]);
-		if (i < size - 1) {
-			printf(", ");
-		}
-	}
-	printf("]\n");
-}
-
-void printGeneral(const General* general) {
+void print_general(const General* general) {
 	printf("General:\n\n");
 	printf("Audio Filename: %s\n", general->audioFilename);
 	printf("Audio Lead-In: %d\n", general->audioLeadIn);
@@ -44,20 +23,20 @@ void printGeneral(const General* general) {
 	printf("Samples Match Playback Rate: %d\n\n", general->samplesMatchPlaybackRate);
 }
 
-void printEditor(const Editor* editor) {
+void print_editor(const Editor* editor) {
 	printf("Editor:\n\n");
 	printf("Bookmarks: ");
 	if (editor->bookmarks == NULL)
 		printf("NULL\n");
 	else
-		print_int_list(editor->bookmarks->elements, editor->bookmarks->size);
+		print_ilist(editor->bookmarks);
 	printf("Distance Spacing: %0.2f\n", editor->distanceSpacing);
 	printf("Beat Divisor: %d\n", editor->beatDivisor);
 	printf("Grid Size: %d\n", editor->gridSize);
 	printf("Timeline Zoom: %0.2f\n\n", editor->timelineZoom);
 }
 
-void printMetadata(const Metadata* metadata) {
+void print_metadata(const Metadata* metadata) {
 	printf("Metadata:\n\n");
 	printf("Title: %s\n", metadata->title);
 	printf("Title (Unicode): %s\n", metadata->titleUnicode);
@@ -70,12 +49,12 @@ void printMetadata(const Metadata* metadata) {
 	if (metadata->tags == NULL)
 		printf("NULL\n");
 	else
-		print_string_list(metadata->tags->elements, metadata->tags->size);
+		print_slist(metadata->tags);
 	printf("Beatmap ID: %d\n", metadata->beatmapID);
 	printf("Beatmap Set ID: %d\n\n", metadata->beatmapSetID);
 }
 
-void printDifficulty(const Difficulty* difficulty) {
+void print_difficulty(const Difficulty* difficulty) {
 	printf("Difficulty:\n\n");
 	printf("HP Drain Rate: %.2f\n", difficulty->hpDrainRate);
 	printf("Circle Size: %.2f\n", difficulty->circleSize);
@@ -85,7 +64,7 @@ void printDifficulty(const Difficulty* difficulty) {
 	printf("Slider Tick Rate: %.2f\n\n", difficulty->sliderTickRate);
 }
 
-void printEvent(const Event* event) {
+void print_event(const Event* event) {
 	if (event == NULL) {
 		printf("Invalid event.\n");
 		return;
@@ -115,7 +94,7 @@ void printEvent(const Event* event) {
 	}
 }
 
-void printEvents(const List* events) {
+void print_events(const List* events) {
 	if (events == NULL || events->elements == NULL) {
 		printf("Invalid Event list.\n");
 		return;
@@ -124,13 +103,14 @@ void printEvents(const List* events) {
 	printf("Events (%d):\n\n", size);
 	for (int i = 0; i < size; i++) {
 		Event* event = (Event*)events->elements[i];
-		printEvent(event);
+		printf("(%i)\n", i);
+		print_event(event);
 		printf("\n");
 	}
 	printf("\n");
 }
 
-void printTimingPoint(const TimingPoint* timingPoint) {
+void print_timingPoint(const TimingPoint* timingPoint) {
 	printf("Time: %d\n", timingPoint->time);
 	printf("Beat Length: %f\n", timingPoint->beatLength);
 	printf("Meter: %d\n", timingPoint->meter);
@@ -141,7 +121,7 @@ void printTimingPoint(const TimingPoint* timingPoint) {
 	printf("Effects: %d\n", timingPoint->effects);
 }
 
-void printTimingPoints(const List* timingPoints) {
+void print_timingPoints(const List* timingPoints) {
 	if (timingPoints == NULL || timingPoints->elements == NULL) {
 		printf("Invalid TimingPoint list.\n");
 		return;
@@ -150,13 +130,14 @@ void printTimingPoints(const List* timingPoints) {
 	printf("TimingPoints (%d):\n\n", size);
 	for (int i = 0; i < size; i++) {
 		TimingPoint* timingPoint = (TimingPoint*)timingPoints->elements[i];
-		printTimingPoint(timingPoint);
+		printf("(%i)\n", i);
+		print_timingPoint(timingPoint);
 		printf("\n");
 	}
 	printf("\n");
 }
 
-void printBeatmapColour(const BeatmapColour* beatmapColour) {
+void print_beatmapColour(const BeatmapColour* beatmapColour) {
 	printf("Type: %d\n", beatmapColour->type);
 	printf("Red: %d\n", beatmapColour->red);
 	printf("Green: %d\n", beatmapColour->green);
@@ -164,7 +145,7 @@ void printBeatmapColour(const BeatmapColour* beatmapColour) {
 	if (beatmapColour->type == 0) printf("Combo: %d\n", ((BeatmapComboColour*)beatmapColour->object)->combo);
 }
 
-void printBeatmapColours(const List* beatmapColours) {
+void print_beatmapColours(const List* beatmapColours) {
 	if (beatmapColours == NULL || beatmapColours->elements == NULL) {
 		printf("Invalid BeatmapColour list.\n");
 		return;
@@ -173,20 +154,21 @@ void printBeatmapColours(const List* beatmapColours) {
 	printf("BeatmapColours (%d):\n\n", size);
 	for (int i = 0; i < size; i++) {
 		BeatmapColour* beatmapColour = (BeatmapColour*)beatmapColours->elements[i];
-		printBeatmapColour(beatmapColour);
+		printf("(%i)\n", i);
+		print_beatmapColour(beatmapColour);
 		printf("\n");
 	}
 	printf("\n");
 }
 
-void printHitSound(const HitSound* hitSound) {
+void print_hitSound(const HitSound* hitSound) {
 	printf("\tNormal: %d\n", hitSound->normal);
 	printf("\tWhistle: %d\n", hitSound->whistle);
 	printf("\tFinish: %d\n", hitSound->finish);
 	printf("\tClap: %d\n", hitSound->clap);
 }
 
-void printHitSample(const HitSample* hitSample) {
+void print_hitSample(const HitSample* hitSample) {
 	printf("\tNormalSet: %d\n", hitSample->normalSet);
 	printf("\tAdditionSet: %d\n", hitSample->additionSet);
 	printf("\tIndex: %d\n", hitSample->index);
@@ -194,7 +176,7 @@ void printHitSample(const HitSample* hitSample) {
 	printf("\tFilename: %s\n", hitSample->filename);
 }
 
-void printSlider(const Slider* slider) {
+void print_slider(const Slider* slider) {
 	printf("Slider:\n");
 	printf("\tCurveType: %c\n", slider->curveType);
 	printf("\tCurvePoints: [");
@@ -212,7 +194,7 @@ void printSlider(const Slider* slider) {
 	if (slider->edgeSounds == NULL)
 		printf("NULL\n");
 	else
-		print_int_list(slider->edgeSounds->elements, slider->edgeSounds->size);
+		print_ilist(slider->edgeSounds);
 	printf("\tEdgeSets: [");
 	for (int i = 0; i < slider->edgeSets->size; i++) {
 		EdgeSet* edgeSet = (EdgeSet*)slider->edgeSets->elements[i];
@@ -224,18 +206,17 @@ void printSlider(const Slider* slider) {
 	printf("]\n");
 }
 
-void printSpinner(const Spinner* spinner) {
+void print_spinner(const Spinner* spinner) {
 	printf("Spinner:\n");
 	printf("\tEndTime: %d\n", spinner->endTime);
 }
 
-void printHold(const Hold* hold) {
+void print_hold(const Hold* hold) {
 	printf("Hold:\n");
 	printf("\tEndTime: %d\n", hold->endTime);
 }
 
-void printHitObject(const HitObject* hitObject) {
-	printf("HitObject:\n\n");
+void print_hitObject(const HitObject* hitObject) {
 	printf("X: %d\n", hitObject->x);
 	printf("Y: %d\n", hitObject->y);
 	printf("Time: %d\n", hitObject->time);
@@ -243,7 +224,7 @@ void printHitObject(const HitObject* hitObject) {
 	printf("NewCombo: %d\n", hitObject->new_combo);
 	printf("ComboSkip: %d\n", hitObject->combo_skip);
 	printf("HitSound:\n");
-	if (hitObject->hitSound != NULL) printHitSound(hitObject->hitSound);
+	if (hitObject->hitSound != NULL) print_hitSound(hitObject->hitSound);
 	else {
 		printf("wtf\n");
 		exit(1);
@@ -253,19 +234,19 @@ void printHitObject(const HitObject* hitObject) {
 		printf("HitCircle\n");
 	} else if (hitObject->type == 1) {
 		Slider* slider = (Slider*)hitObject->object;
-		printSlider(slider);
+		print_slider(slider);
 	} else if (hitObject->type == 2) {
 		Spinner* spinner = (Spinner*)hitObject->object;
-		printSpinner(spinner);
+		print_spinner(spinner);
 	} else if (hitObject->type == 3) {
 		Hold* hold = (Hold*)hitObject->object;
-		printHold(hold);
+		print_hold(hold);
 	}
 	printf("HitSample:\n");
-	printHitSample(hitObject->hitSample);
+	print_hitSample(hitObject->hitSample);
 }
 
-void printHitObjects(const List* hitObjects) {
+void print_hitObjects(const List* hitObjects) {
 	if (hitObjects == NULL || hitObjects->elements == NULL) {
 		printf("Invalid HitObject list.\n");
 		return;
@@ -274,8 +255,20 @@ void printHitObjects(const List* hitObjects) {
 	printf("HitObjects (%d):\n\n", size);
 	for (int i = 0; i < size; i++) {
 		HitObject* hitObject = (HitObject*)hitObjects->elements[i];
-		printHitObject(hitObject);
+		printf("(%i)\n", i);
+		print_hitObject(hitObject);
 		printf("\n");
 	}
 	printf("\n");
+}
+
+void print_beatmap(Beatmap* beatmap) {
+	print_general(beatmap->general);
+	print_editor(beatmap->editor);
+	print_metadata(beatmap->metadata);
+	print_difficulty(beatmap->difficulty);
+	print_events(beatmap->events);
+	print_timingPoints(beatmap->timingPoints);
+	print_beatmapColours(beatmap->beatmapColours);
+	print_hitObjects(beatmap->hitObjects);
 }
