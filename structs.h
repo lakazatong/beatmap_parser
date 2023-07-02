@@ -109,7 +109,7 @@ typedef struct {
 } BeatmapSliderBorderColour; */
 
 typedef struct {
-	int type; // 0 BeatmapComboColour 1 BeatmapSliderTrackOverrideColour 2 BeatmapbeatmapSliderTrackOverrideColour
+	int type; // 0 BeatmapComboColour 1 BeatmapSliderTrackOverrideColour 2 BeatmapSliderBorderColour
 	int red;
 	int green;
 	int blue;
