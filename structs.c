@@ -67,7 +67,7 @@ Difficulty* new_difficulty() {
 
 BackgroundEvent* new_backgroundEvent() {
 	BackgroundEvent* r = malloc(sizeof(BackgroundEvent));
-	r->filename = malloc(1*sizeof(char));
+	r->filename = calloc(1, 1);
 	r->xOffset = 0;
 	r->yOffset = 0;
 	return r;
@@ -75,7 +75,7 @@ BackgroundEvent* new_backgroundEvent() {
 
 VideoEvent* new_videoEvent() {
 	VideoEvent* r = malloc(sizeof(VideoEvent));
-	r->filename = malloc(1*sizeof(char));
+	r->filename = calloc(1, 1);
 	r->xOffset = 0;
 	r->yOffset = 0;
 	return r;
@@ -139,7 +139,7 @@ HitSample* new_hitSample() {
 	r->additionSet = 0;
 	r->index = 0;
 	r->volume = 0;
-	r->filename = malloc(1*sizeof(char));
+	r->filename = calloc(1, 1);
 	return r;
 }
 

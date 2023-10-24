@@ -88,6 +88,8 @@ void subint(int* out, char* string, int start_index, int end_index) {
 	char* end_ptr;
 	*out = strtol(remove_chars(tmp), &end_ptr, 10);
 	if (*end_ptr != '\0') {
+		// printf("tmp = '%s'\n", tmp);
+		// printf("remove_chars(tmp) = '%s'\n", remove_chars(tmp));
 		printf("subint: strtol failed\n");
 		exit(1);
 	}
@@ -118,9 +120,10 @@ void parse_filename(char** out, char* string){
 		string_length -= 2;
 	}
 	string[string_length] = '\0';
-	*out = realloc(*out, (string_length+1)*sizeof(char));
+	*out = realloc(*out, string_length+1);
 	strncpy(*out, string, string_length);
 	(*out)[string_length] = '\0';
+	remove_chars(*out);
 }
 
 void parse_general(General* general){
@@ -481,6 +484,21 @@ void parse_hitSample(HitObject* hitObject, char* token){
 	parse_filename(&(hitObject->hitSample->filename), token);
 }
 
+void parse_hitSample_hold(HitObject* hitObject, char* token){
+	token = strtok(token, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->normalSet, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->additionSet, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->index, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->volume, token, 0, -1);
+	token = strtok(NULL, ":"); if (token == NULL) return;
+	subint(&hitObject->hitSample->volume, token, 0, -1);
+	token = strtok(NULL, ""); if (strncmp(token, "\r\n", 2) == 0) return;
+	parse_filename(&(hitObject->hitSample->filename), token);
+}
+
 char* parse_slider(HitObject* hitObject){
 	char* token;
 	char* next_token;
@@ -535,40 +553,38 @@ char* parse_spinner(HitObject* hitObject){
 	return strtok(NULL, "");
 }
 
-char* parse_hold(HitObject* hitObject){
-	char* token;
+char* parse_hold(HitObject* hitObject, char* token){
 	Hold* hold = new_hold();
 	hitObject->type = 3;
 	hitObject->object = hold;
-	token = strtok(NULL, ",");
 	subint(&hold->endTime, token, 0, -1);
 	return strtok(NULL, "");
 }
 
-void parse_hitObjects(List* hitObjects){
+void parse_hitObject(List* hitObjects){
 	char* token;
 	HitObject* hitObject = new_hitObject();
 	token = strtok(line, ",");
 	if (token == NULL) {
-		printf("parse_hitObjects: incomplete hitObject, missing x\n");
+		printf("parse_hitObject: incomplete hitObject, missing x\n");
 		return;
 	}
 	subint(&hitObject->x, token, 0, -1);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_hitObjects: incomplete hitObject, missing y\n");
+		printf("parse_hitObject: incomplete hitObject, missing y\n");
 		return;
 	}
 	subint(&hitObject->y, token, 0, -1);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_hitObjects: incomplete hitObject, missing time\n");
+		printf("parse_hitObject: incomplete hitObject, missing time\n");
 		return;
 	}
 	subint(&hitObject->time, token, 0, -1);
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_hitObjects: incomplete hitObject, missing type\n");
+		printf("parse_hitObject: incomplete hitObject, missing type\n");
 		return;
 	}
 	int type_flags;
@@ -577,7 +593,7 @@ void parse_hitObjects(List* hitObjects){
 	hitObject->combo_skip = (type_flags & 0b01110000) >> 4;
 	token = strtok(NULL, ",");
 	if (token == NULL) {
-		printf("parse_hitObjects: incomplete hitObject, missing hitSound\n");
+		printf("parse_hitObject: incomplete hitObject, missing hitSound\n");
 		return;
 	}
 	int hitSound_flags;
@@ -593,12 +609,16 @@ void parse_hitObjects(List* hitObjects){
 	if (type == 1) next_token = strtok(NULL, "");
 	else if (type == 2) next_token = parse_slider(hitObject);
 	else if (type == 8) next_token = parse_spinner(hitObject);
-	else if (type == 128) next_token = parse_hold(hitObject);
-	else{
-		printf("parse_hitObjects: unkown type (%i)\n", type);
+	else if (type == 128) {
+		next_token = parse_hold(hitObject, token);
+		parse_hitSample_hold(hitObject, next_token);
+		list_add(hitObjects, hitObject);
 		return;
 	}
-	hitObject->hitSample->filename = NULL;
+	else{
+		printf("parse_hitObject: unkown type (%i)\n", type);
+		return;
+	}
 	parse_hitSample(hitObject, next_token);
 	list_add(hitObjects, hitObject);
 }
@@ -724,7 +744,7 @@ Beatmap* parse_beatmap(char* osuFile){
 				if (line[1] == '\n')
 					break;
 				else if (line[0] != '/' && line[1] != '/')
-					parse_hitObjects(beatmap->hitObjects);
+					parse_hitObject(beatmap->hitObjects);
 			}
 		}
 	}

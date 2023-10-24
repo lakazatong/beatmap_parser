@@ -20,7 +20,7 @@ void parse_difficulty(Difficulty* difficulty);
 void parse_events(List* events);
 void parse_timingPoints(List* timingPoints);
 void parse_colours(List* colours);
-void parse_hitObjects(List* hitObjects);
+void parse_hitObject(List* hitObjects);
 Beatmap* parse_beatmap(char* osuFile);
 
 #endif

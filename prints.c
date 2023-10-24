@@ -49,7 +49,7 @@ void print_metadata(const Metadata* metadata) {
 	if (metadata->tags == NULL)
 		printf("NULL\n");
 	else
-		print_slist(metadata->tags);
+		print_slist(metadata->tags, 0);
 	printf("Beatmap ID: %d\n", metadata->beatmapID);
 	printf("Beatmap Set ID: %d\n\n", metadata->beatmapSetID);
 }
@@ -231,7 +231,7 @@ void print_hitObject(const HitObject* hitObject) {
 	}
 	printf("Object: ");
 	if (hitObject->type == 0) {
-		printf("HitCircle\n");
+		printf("HitCircle:\n");
 	} else if (hitObject->type == 1) {
 		Slider* slider = (Slider*)hitObject->object;
 		print_slider(slider);
