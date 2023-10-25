@@ -5,20 +5,15 @@ rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(
 SRC_FILES := $(call rwildcard,.,*.c)
 OBJ_DIR := obj
 O_FILES := $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
-ifeq ($(OS),Windows_NT)
-	EXE=bm_parser.exe
-else
-	EXE=bm_parser
-endif
 
 all: test
 
 test: $(O_FILES)
-	$(CC) $(CFLAGS) -o $(EXE) $^
+	$(CC) $(CFLAGS) -o bm_parser $^
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR) $(EXE)
+	rm -rf $(OBJ_DIR) bm_parser bm_parser.exe
