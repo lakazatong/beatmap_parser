@@ -76,74 +76,100 @@ void jsonify_difficulty(const Difficulty* difficulty, FILE* fp) {
 	fprintf(fp, "\t},\n");
 }
 
-void jsonify_event(const Event* event, FILE* fp) {
-	fprintf(fp, "\t\t{\n");
-	int eventType = event->type;
-	fprintf(fp, "\t\t\t\"EventType\": %d,\n", eventType);
-	fprintf(fp, "\t\t\t\"StartTime\": %d,\n", event->startTime);
-	if (eventType == 0) {
-		BackgroundEvent* backgroundEvent = (BackgroundEvent*)event->event;
-		fprintf(fp, "\t\t\t\"Filename\": \"%s\",\n", backgroundEvent->filename);
-		fprintf(fp, "\t\t\t\"xOffset\": %d,\n", backgroundEvent->xOffset);
-		fprintf(fp, "\t\t\t\"yOffset\": %d\n", backgroundEvent->yOffset);
-	} else if (eventType == 1) {
-		VideoEvent* videoEvent = (VideoEvent*)event->event;
-		fprintf(fp, "\t\t\t\"Filename\": \"%s\",\n", videoEvent->filename);
-		fprintf(fp, "\t\t\t\"xOffset\": %d,\n", videoEvent->xOffset);
-		fprintf(fp, "\t\t\t\"yOffset\": %d\n", videoEvent->yOffset);
-	} else if (eventType == 2) {
-		BreakEvent* breakEvent = (BreakEvent*)event->event;
-		fprintf(fp, "\t\t\t\"EndTime\": %d\n", breakEvent->endTime);
-	} else {
-		fprintf(fp, "Unknown event type.\n");
+#define jsonify_event \
+	fprintf(fp, "\t\t{\n");\
+	int eventType = event->type;\
+	fprintf(fp, "\t\t\t\"EventType\": %d,\n", eventType);\
+	fprintf(fp, "\t\t\t\"StartTime\": %d,\n", event->startTime);\
+	if (eventType == 0) {\
+		BackgroundEvent* backgroundEvent = (BackgroundEvent*)event->event;\
+		fprintf(fp, "\t\t\t\"Filename\": \"%s\",\n", backgroundEvent->filename);\
+		fprintf(fp, "\t\t\t\"xOffset\": %d,\n", backgroundEvent->xOffset);\
+		fprintf(fp, "\t\t\t\"yOffset\": %d\n", backgroundEvent->yOffset);\
+	} else if (eventType == 1) {\
+		VideoEvent* videoEvent = (VideoEvent*)event->event;\
+		fprintf(fp, "\t\t\t\"Filename\": \"%s\",\n", videoEvent->filename);\
+		fprintf(fp, "\t\t\t\"xOffset\": %d,\n", videoEvent->xOffset);\
+		fprintf(fp, "\t\t\t\"yOffset\": %d\n", videoEvent->yOffset);\
+	} else if (eventType == 2) {\
+		BreakEvent* breakEvent = (BreakEvent*)event->event;\
+		fprintf(fp, "\t\t\t\"EndTime\": %d\n", breakEvent->endTime);\
+	} else {\
+		fprintf(fp, "Unknown event type.\n");\
 	}
-	fprintf(fp, "\t\t},\n");
-}
 
 void jsonify_events(const List* events, FILE* fp) {
 	fprintf(fp, "\t\"Events\":\n");
 	fprintf(fp, "\t[\n");
-	for (int i = 0; i < events->size; i++)
-		jsonify_event(events->elements[i], fp);
+	Event* event = NULL;
+	for (int i = 0; i < events->size - 1; i++) {
+		event = events->elements[i];
+		jsonify_event
+		fprintf(fp, "\t\t},\n");
+	}
+	if (events->size > 0) {
+		event = events->elements[events->size - 1];
+		jsonify_event
+		fprintf(fp, "\t\t}\n");
+	}
 	fprintf(fp, "\t],\n");
 }
 
-void jsonify_timingPoint(const TimingPoint* timingPoint, FILE* fp) {
-	fprintf(fp, "\t\t{\n");
-	fprintf(fp, "\t\t\t\"Time\": %d,\n", timingPoint->time);
-	fprintf(fp, "\t\t\t\"BeatLength\": %f,\n", timingPoint->beatLength);
-	fprintf(fp, "\t\t\t\"Meter\": %d,\n", timingPoint->meter);
-	fprintf(fp, "\t\t\t\"SampleSet\": %d,\n", timingPoint->sampleSet);
-	fprintf(fp, "\t\t\t\"SampleIndex\": %d,\n", timingPoint->sampleIndex);
-	fprintf(fp, "\t\t\t\"Volume\": %d,\n", timingPoint->volume);
-	fprintf(fp, "\t\t\t\"Uninherited\": %d,\n", timingPoint->uninherited);
+#define jsonify_timingPoint \
+	fprintf(fp, "\t\t{\n");\
+	fprintf(fp, "\t\t\t\"Time\": %d,\n", timingPoint->time);\
+	fprintf(fp, "\t\t\t\"BeatLength\": %f,\n", timingPoint->beatLength);\
+	fprintf(fp, "\t\t\t\"Meter\": %d,\n", timingPoint->meter);\
+	fprintf(fp, "\t\t\t\"SampleSet\": %d,\n", timingPoint->sampleSet);\
+	fprintf(fp, "\t\t\t\"SampleIndex\": %d,\n", timingPoint->sampleIndex);\
+	fprintf(fp, "\t\t\t\"Volume\": %d,\n", timingPoint->volume);\
+	fprintf(fp, "\t\t\t\"Uninherited\": %d,\n", timingPoint->uninherited);\
 	fprintf(fp, "\t\t\t\"Effects\": %d\n", timingPoint->effects);
-	fprintf(fp, "\t\t},\n");
-}
 
 void jsonify_timingPoints(const List* timingPoints, FILE* fp) {
 	fprintf(fp, "\t\"TimingPoints\":\n");
 	fprintf(fp, "\t[\n");
-	for (int i = 0; i < timingPoints->size; i++)
-		jsonify_timingPoint(timingPoints->elements[i], fp);
+	TimingPoint* timingPoint = NULL;
+	for (int i = 0; i < timingPoints->size - 1; i++) {
+		timingPoint = timingPoints->elements[i];
+		jsonify_timingPoint
+		fprintf(fp, "\t\t},\n");
+	}
+	if (timingPoints->size > 0) {
+		timingPoint = timingPoints->elements[timingPoints->size - 1];
+		jsonify_timingPoint
+		fprintf(fp, "\t\t}\n");
+	}
 	fprintf(fp, "\t],\n");
 }
 
-void jsonify_beatmapColour(const BeatmapColour* beatmapColour, FILE* fp) {
-	fprintf(fp, "\t\t{\n");
-	fprintf(fp, "\t\t\t\"Type\": %d,\n", beatmapColour->type);
-	fprintf(fp, "\t\t\t\"Red\": %d,\n", beatmapColour->red);
-	fprintf(fp, "\t\t\t\"Green\": %d,\n", beatmapColour->green);
-	fprintf(fp, "\t\t\t\"Blue\": %d,\n", beatmapColour->blue);
-	if (beatmapColour->type == 0) fprintf(fp, "\t\t\t\"Combo\": %d\n", ((BeatmapComboColour*)beatmapColour->object)->combo);
-	fprintf(fp, "\t\t},\n");
-}
+#define jsonify_beatmapColour \
+	fprintf(fp, "\t\t{\n");\
+	fprintf(fp, "\t\t\t\"Type\": %d,\n", beatmapColour->type);\
+	fprintf(fp, "\t\t\t\"Red\": %d,\n", beatmapColour->red);\
+	fprintf(fp, "\t\t\t\"Green\": %d,\n", beatmapColour->green);\
+	if (beatmapColour->type == 0) {\
+		fprintf(fp, "\t\t\t\"Blue\": %d,\n", beatmapColour->blue);\
+		fprintf(fp, "\t\t\t\"Combo\": %d\n", ((BeatmapComboColour*)beatmapColour->object)->combo);\
+	}\
+	else {\
+		fprintf(fp, "\t\t\t\"Blue\": %d\n", beatmapColour->blue);\
+	}
 
 void jsonify_beatmapColours(const List* beatmapColours, FILE* fp) {
 	fprintf(fp, "\t\"BeatmapColours\":\n");
 	fprintf(fp, "\t[\n");
-	for (int i = 0; i < beatmapColours->size; i++)
-		jsonify_beatmapColour(beatmapColours->elements[i], fp);
+	BeatmapColour* beatmapColour = NULL;
+	for (int i = 0; i < beatmapColours->size - 1; i++) {
+		beatmapColour = beatmapColours->elements[i];
+		jsonify_beatmapColour
+		fprintf(fp, "\t\t},\n");
+	}
+	if (beatmapColours->size > 0) {
+		beatmapColour = beatmapColours->elements[beatmapColours->size - 1];
+		jsonify_beatmapColour;
+		fprintf(fp, "\t\t}\n");
+	}
 	fprintf(fp, "\t],\n");
 }
 
@@ -185,7 +211,7 @@ void jsonify_slider(const Slider* slider, FILE* fp) {
 			EdgeSet* lastEdgeSet = (EdgeSet*)slider->edgeSets->elements[slider->edgeSets->size - 1];
 			fprintf(fp, "[%s, %s]", lastEdgeSet->normalSet, lastEdgeSet->additionSet);
 		}
-		fprintf(fp, "],\n");
+		fprintf(fp, "]\n");
 	}
 	else
 		fprintf(fp, "null,\n");
@@ -204,36 +230,43 @@ void jsonify_hold(const Hold* hold, FILE* fp) {
 	fprintf(fp, "\t\t\t},\n");
 }
 
-void jsonify_hitObject(const HitObject* hitObject, FILE* fp) {
-	fprintf(fp, "\t\t{\n");
-	fprintf(fp, "\t\t\t\"X\": %d,\n", hitObject->x);
-	fprintf(fp, "\t\t\t\"Y\": %d,\n", hitObject->y);
-	fprintf(fp, "\t\t\t\"Time\": %d,\n", hitObject->time);
-	fprintf(fp, "\t\t\t\"Type\": %d,\n", hitObject->type);
-	fprintf(fp, "\t\t\t\"NewCombo\": %d,\n", hitObject->new_combo);
-	fprintf(fp, "\t\t\t\"ComboSkip\": %d,\n", hitObject->combo_skip);
-	HitSound* hitSound = hitObject->hitSound;
-	fprintf(fp, "\t\t\t\"HitSound\": [%d, %d, %d, %d],\n", hitSound->normal, hitSound->whistle, hitSound->finish, hitSound->clap);
-	fprintf(fp, "\t\t\t\"Object\":");
-	if (hitObject->type == 0)
-		fprintf(fp, " null,\n");
-	else if (hitObject->type == 1)
-		jsonify_slider(hitObject->object, fp);
-	else if (hitObject->type == 2)
-		jsonify_spinner(hitObject->object, fp);
-	else if (hitObject->type == 3)
-		jsonify_hold(hitObject->object, fp);
-	HitSample* hitSample = hitObject->hitSample;
+#define jsonify_hitObject \
+	fprintf(fp, "\t\t{\n");\
+	fprintf(fp, "\t\t\t\"X\": %d,\n", hitObject->x);\
+	fprintf(fp, "\t\t\t\"Y\": %d,\n", hitObject->y);\
+	fprintf(fp, "\t\t\t\"Time\": %d,\n", hitObject->time);\
+	fprintf(fp, "\t\t\t\"Type\": %d,\n", hitObject->type);\
+	fprintf(fp, "\t\t\t\"NewCombo\": %d,\n", hitObject->new_combo);\
+	fprintf(fp, "\t\t\t\"ComboSkip\": %d,\n", hitObject->combo_skip);\
+	HitSound* hitSound = hitObject->hitSound;\
+	fprintf(fp, "\t\t\t\"HitSound\": [%d, %d, %d, %d],\n", hitSound->normal, hitSound->whistle, hitSound->finish, hitSound->clap);\
+	fprintf(fp, "\t\t\t\"Object\":");\
+	if (hitObject->type == 0)\
+		fprintf(fp, " null,\n");\
+	else if (hitObject->type == 1)\
+		jsonify_slider(hitObject->object, fp);\
+	else if (hitObject->type == 2)\
+		jsonify_spinner(hitObject->object, fp);\
+	else if (hitObject->type == 3)\
+		jsonify_hold(hitObject->object, fp);\
+	HitSample* hitSample = hitObject->hitSample;\
 	fprintf(fp, "\t\t\t\"HitSample\": [%d, %d, %d, %d, \"%s\"]\n", hitSample->normalSet, hitSample->additionSet, hitSample->index, hitSample->volume, hitSample->filename);
-	fprintf(fp, "\t\t},\n");
-}
 
 void jsonify_hitObjects(const List* hitObjects, FILE* fp) {
 	fprintf(fp, "\t\"HitObjects\":\n");
 	fprintf(fp, "\t[\n");
-	for (int i = 0; i < hitObjects->size; i++)
-		jsonify_hitObject(hitObjects->elements[i], fp);
-	fprintf(fp, "\t],\n");
+	HitObject* hitObject = NULL;
+	for (int i = 0; i < hitObjects->size - 1; i++) {
+		hitObject = hitObjects->elements[i];
+		jsonify_hitObject
+		fprintf(fp, "\t\t},\n");
+	}
+	if (hitObjects->size > 0) {
+		hitObject = hitObjects->elements[hitObjects->size - 1];
+		jsonify_hitObject
+		fprintf(fp, "\t\t}\n");
+	}
+	fprintf(fp, "\t]\n");
 }
 
 void jsonify_beatmap(Beatmap* beatmap, char* path) {
