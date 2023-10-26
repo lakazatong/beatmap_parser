@@ -1,4 +1,4 @@
-#include "jsonify.h"
+#include "structs.h"
 
 void jsonify_general(const General* general, FILE* fp) {
 	fprintf(fp, "\t\"General\":\n");

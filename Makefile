@@ -1,19 +1,13 @@
-CC = gcc
-CFLAGS = -g3 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
-# source: https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make/18258352#18258352
-rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-SRC_FILES := $(call rwildcard,.,*.c)
-OBJ_DIR := obj
-O_FILES := $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
+CC=gcc
+CFLAGS=-g3 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
+SRC_FILES:=$(wildcard *.c)
+SRC_FILES+=$(wildcard libs/c_utils/utils/*.c)
+OFILES:=$(SRC_FILES:.c=.o)
 
 all: test
 
-test: $(O_FILES)
+test: $(OFILES)
 	$(CC) $(CFLAGS) -o bm_parser $^
 
-$(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 clean:
-	rm -rf $(OBJ_DIR) bm_parser bm_parser.exe
+	rm -rf $(OFILES) bm_parser bm_parser.exe
