@@ -13,18 +13,18 @@ char* remove_chars(char* string) {
 	size_t j = 0;
 	while (i < length) {
 		int remove = 0;
-		for (j = 0; j < unwanted_size; j++) {
+		for (j = 0; j < unwanted_size; j += 1) {
 			if (string[i] == unwanted[j]) {
 				remove = 1;
 				break;
 			}
 		}
 		if (remove) {
-			for (size_t k = i; k < length - 1; k++) {
+			for (size_t k = i; k < length - 1; k += 1) {
 				string[k] = string[k + 1];
 			}
 			string[length - 1] = '\0';
-			length--;
+			length -= 1;
 		}
 		else
 			i += 1;
@@ -32,7 +32,33 @@ char* remove_chars(char* string) {
 	return string;
 }
 
-void substring(char** out, char* string, int start_index, int end_index) {
+char* nremove_chars(char* string, size_t length) {
+	if (string == NULL || unwanted == NULL) return NULL;
+	size_t i = 0;
+	size_t j = 0;
+	while (i < length) {
+		int remove = 0;
+		for (j = 0; j < unwanted_size; j += 1) {
+			if (string[i] == unwanted[j]) {
+				remove = 1;
+				break;
+			}
+		}
+		if (remove) {
+			for (size_t k = i; k < length - 1; k += 1) {
+				string[k] = string[k + 1];
+			}
+			string[length - 1] = '\0';
+			length -= 1;
+		}
+		else
+			i += 1;
+	}
+	return string;
+}
+
+void substring(char** out_ptr, char* string, int start_index, int end_index) {
+	char* out = *out_ptr;
 	int substring_length;
 	if (end_index == -1) {
 		strcpy(tmp, string);
@@ -45,14 +71,15 @@ void substring(char** out, char* string, int start_index, int end_index) {
 		printf("substring: subvec_length negative (%i)\n", substring_length);
 		exit(1);
 	}
-	if (*out == string)
-		memmove(*out, *out + start_index, substring_length);
+	if (out == string)
+		memmove(out, out + start_index, substring_length);
 	else {
-		*out = realloc(*out, (substring_length + 1) * sizeof(char));
-		strncpy(*out, string + start_index, substring_length);
+		out = realloc(out, (substring_length + 1) * sizeof(char));
+		strncpy(out, string + start_index, substring_length);
 	}
-	(*out)[substring_length] = '\0';
-	remove_chars(*out);
+	out[substring_length] = '\0';
+	nremove_chars(out, substring_length);
+	*out_ptr = out;
 }
 
 void subvec(char* out, char* string, int start_index, int end_index) {
@@ -73,11 +100,10 @@ void subvec(char* out, char* string, int start_index, int end_index) {
 	else
 		strncpy(out, string + start_index, subvec_length);
 	out[subvec_length] = '\0';
-	remove_chars(out);
+	nremove_chars(out, subvec_length);
 }
 
-
-void subint(int* out, char* string, int start_index, int end_index) {
+void subint(int* out_ptr, char* string, int start_index, int end_index) {
 	int substring_length;
 	if (end_index == -1){ substring_length = strlen(string) - start_index;}
 	else 				{ substring_length = end_index - start_index; }
@@ -88,7 +114,7 @@ void subint(int* out, char* string, int start_index, int end_index) {
 	strncpy(tmp, string + start_index, substring_length);
 	tmp[substring_length] = '\0';
 	char* end_ptr;
-	*out = strtol(remove_chars(tmp), &end_ptr, 10);
+	*out_ptr = strtol(nremove_chars(tmp, substring_length), &end_ptr, 10);
 	if (*end_ptr != '\0') {
 		// printf("tmp = '%s'\n", tmp);
 		// printf("remove_chars(tmp) = '%s'\n", remove_chars(tmp));
@@ -97,7 +123,7 @@ void subint(int* out, char* string, int start_index, int end_index) {
 	}
 }
 
-void subfloat(float* out, char* string, int start_index, int end_index) {
+void subfloat(float* out_ptr, char* string, int start_index, int end_index) {
 	int substring_length;
 	if (end_index == -1){ substring_length = strlen(string) - start_index;}
 	else 				{ substring_length = end_index - start_index; }
@@ -108,20 +134,22 @@ void subfloat(float* out, char* string, int start_index, int end_index) {
 	strncpy(tmp, string + start_index, substring_length);
 	tmp[substring_length] = '\0';
 	char* end_ptr;
-	*out = strtof(remove_chars(tmp), &end_ptr);
+	*out_ptr = strtof(nremove_chars(tmp, substring_length), &end_ptr);
 	if (*end_ptr != '\0'){
 		printf("subfloat: subfloat failed\n");
 		exit(1);
 	}
 }
 
-void parse_filename(char** out, char* string){
+void parse_filename(char** out_ptr, char* string){
+	char* out = *out_ptr;
 	int string_length = strlen(string);
 	string[string_length] = '\0';
-	*out = realloc(*out, string_length+1);
-	strncpy(*out, string, string_length);
-	(*out)[string_length] = '\0';
-	remove_chars(*out);
+	out = realloc(out, string_length+1);
+	strncpy(out, string, string_length);
+	out[string_length] = '\0';
+	nremove_chars(out, string_length);
+	*out_ptr = out;
 }
 
 void parse_general(General* general){
@@ -244,6 +272,7 @@ void parse_backgroundEvent(Event* event){
 	printf("parse_backgroundEvent: impossible case reached\n");
 	exit(1);
 }
+
 void parse_videoEvent(Event* event){
 	char* token;
 	event->type = 1;
@@ -273,6 +302,7 @@ void parse_videoEvent(Event* event){
 	printf("parse_videoEvent: impossible case reached\n");
 	exit(1);
 }
+
 void parse_breakEvent(Event* event){
 	char* token;
 	event->type = 2;
@@ -676,7 +706,7 @@ Beatmap* parse_beatmap(char* osuFile){
 			}
 		}
 		else if (strncmp(line, "[Metadata]", 10) == 0) {
-			strcpy(unwanted, "\r\n"); unwanted_size = 2;
+			strcpy(unwanted, "\r\n\""); unwanted_size = 3;
 			while (fgets(line, sizeof(line), file)) {
 				#ifdef DEBUG
 				line_count = debug_function(line_count);
@@ -686,7 +716,7 @@ Beatmap* parse_beatmap(char* osuFile){
 				else if (line[0] != '/' && line[1] != '/')
 					parse_metadata(beatmap->metadata);
 			}
-			strcpy(unwanted, " \r\n"); unwanted_size = 3;
+			strcpy(unwanted, " \r\n\""); unwanted_size = 4;
 		}
 		else if (strncmp(line, "[Difficulty]", 12) == 0) {
 			while (fgets(line, sizeof(line), file)) {
@@ -722,7 +752,7 @@ Beatmap* parse_beatmap(char* osuFile){
 			}
 		}
 		else if (strncmp(line, "[Colours]", 9) == 0) {
-			strcpy(unwanted, "\r\n"); unwanted_size = 2;
+			strcpy(unwanted, "\r\n\""); unwanted_size = 3;
 			while (fgets(line, sizeof(line), file)) {
 				#ifdef DEBUG
 				line_count = debug_function(line_count);
@@ -732,7 +762,7 @@ Beatmap* parse_beatmap(char* osuFile){
 				else if (line[0] != '/' && line[1] != '/')
 					parse_beatmapColours(beatmap->beatmapColours);
 			}
-			strcpy(unwanted, " \r\n"); unwanted_size = 3;
+			strcpy(unwanted, " \r\n\""); unwanted_size = 4;
 		}
 		else if (strncmp(line, "[HitObjects]", 12) == 0) {
 			while (fgets(line, sizeof(line), file)) {
