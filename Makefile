@@ -7,7 +7,7 @@ OFILES:=$(SRC_FILES:.c=.o)
 all: test
 
 test: $(OFILES)
-	$(CC) $(CFLAGS) -o bm_parser $^
+	$(CC) $(CFLAGS) -o bm_parser.exe $^
 
 clean:
-	rm -rf $(OFILES) bm_parser bm_parser.exe
+	rm -rf $(OFILES) bm_parser.exe

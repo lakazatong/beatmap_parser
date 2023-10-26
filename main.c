@@ -13,13 +13,19 @@
 	if (!strcmp(lpCmdLine, ""))\
 		return 1;\
 	Beatmap* bm = parse_beatmap((char*)lpCmdLine);\
-	jsonify_beatmap(bm, "beatmap.json");
+	char filename[1024];\
+	if (sprintf(filename, "%i.json", bm->metadata->beatmapID) < 0)\
+		return 1;\
+	jsonify_beatmap(bm, filename);
 
 #define MAIN_BODY_LINUX \
 	if (argc < 2)\
 		return 1;\
 	Beatmap* bm = parse_beatmap((char*)argv[1]);\
-	jsonify_beatmap(bm, "beatmap.json");
+	char filename[1024];\
+	if (sprintf(filename, "%i.json", bm->metadata->beatmapID) < 0)\
+		return 1;\
+	jsonify_beatmap(bm, filename);
 
 #ifndef _WIN32
 
