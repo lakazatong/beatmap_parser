@@ -9,8 +9,9 @@ char tmp[BUF_SIZE]; // temporary buffer for utils functions
 char* remove_chars(char* string) {
 	if (string == NULL || unwanted == NULL) return NULL;
 	size_t length = strlen(string);
-	size_t i, j;
-	for (i = 0; i < length; i++) {
+	size_t i = 0;
+	size_t j = 0;
+	while (i < length) {
 		int remove = 0;
 		for (j = 0; j < unwanted_size; j++) {
 			if (string[i] == unwanted[j]) {
@@ -24,8 +25,9 @@ char* remove_chars(char* string) {
 			}
 			string[length - 1] = '\0';
 			length--;
-			i--;
 		}
+		else
+			i += 1;
 	}
 	return string;
 }
@@ -115,10 +117,6 @@ void subfloat(float* out, char* string, int start_index, int end_index) {
 
 void parse_filename(char** out, char* string){
 	int string_length = strlen(string);
-	if (string[0] == '\"') {
-		string++;
-		string_length -= 2;
-	}
 	string[string_length] = '\0';
 	*out = realloc(*out, string_length+1);
 	strncpy(*out, string, string_length);
@@ -635,8 +633,8 @@ int debug_function(int line_count){
 #endif
 
 Beatmap* parse_beatmap(char* osuFile){
-	strcpy(unwanted, " \r\n");
-	unwanted_size = 3;
+	strcpy(unwanted, " \r\n\"");
+	unwanted_size = 4;
 	FILE* file = fopen(osuFile, "r");
 	if (file == NULL) {
 		printf("parse_beatmap: failed to open the file\n");

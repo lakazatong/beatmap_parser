@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
+CFLAGS = -g3 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
 # source: https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make/18258352#18258352
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 SRC_FILES := $(call rwildcard,.,*.c)
