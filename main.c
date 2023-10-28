@@ -8,13 +8,13 @@
 	if (argc < 2)\
 		return 1;\
 	Beatmap* bm = parse_beatmap((char*)argv[1]);\
-	jsonify_beatmap(bm, "../io/out");
+	jsonify_beatmap(bm, "out");
 
 #define MAIN_BODY_WIN \
 	if (!strcmp(lpCmdLine, ""))\
 		return 1;\
 	Beatmap* bm = parse_beatmap((char*)lpCmdLine);\
-	jsonify_beatmap(bm, "../io/out");
+	jsonify_beatmap(bm, "out");
 
 #ifndef _WIN32
 
