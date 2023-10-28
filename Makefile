@@ -3,7 +3,7 @@ CC=gcc
 CFLAGS=-Wall -Wextra -Wno-unused-parameter
 C_DIR=src
 O_DIR=obj
-LIB_C_FILES=../c_utils/utils/list.c
+LIB_C_FILES=../c_utils/src/list.c
 EXE=bin/bm_parser.exe
 
 # automatic
