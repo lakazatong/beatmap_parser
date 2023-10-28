@@ -1,3 +1,11 @@
+/* needs c_utils repo to be in the parent directory (see structs.h):
+	../
+		c_utils/
+			...
+		beatmap_parser/
+			...
+			test.c (this file)
+*/
 #include <unistd.h>
 #include <signal.h>
 

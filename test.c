@@ -1,13 +1,3 @@
-/* needs c_utils repo to be in the parent directory (see structs.h):
-	../
-		c_utils/
-			...
-		beatmap_parser/
-			...
-			test.c (this file)
-*/
-/*
-
 #include <time.h>
 
 #include "parser.h"
@@ -56,4 +46,3 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 }
 
 #endif
-*/
