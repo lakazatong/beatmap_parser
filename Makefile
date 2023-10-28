@@ -1,13 +1,41 @@
+# user defined
 CC=gcc
-CFLAGS=-g3 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value
-SRC_FILES:=$(wildcard *.c)
-SRC_FILES+=$(wildcard libs/c_utils/utils/*.c)
-OFILES:=$(SRC_FILES:.c=.o)
+CFLAGS=-Wall -Wextra -Wno-unused-parameter
+C_DIR=src
+O_DIR=obj
+LIB_C_FILES=../c_utils/utils/list.c
 
-all: test
+# automatic
+SRC_FILES=$(wildcard $(C_DIR)/*.c)
+SRC_FILES_FILENAMES=$(basename $(notdir $(filter %.c,$(SRC_FILES))))
+C_FILES=$(SRC_FILES_FILENAMES:%=$(C_DIR)/%.c)
+C_FILES+=$(LIB_C_FILES)
+O_FILES=$(SRC_FILES_FILENAMES:%=$(O_DIR)/%.o)
+LIB_FILES_FILENAMES=$(basename $(notdir $(filter %.c,$(LIB_C_FILES))))
+O_FILES+=$(LIB_FILES_FILENAMES:%=$(O_DIR)/libs/%.o)
+EXE=bin/bm_parser.exe
+$(shell mkdir -p bin)
+$(shell mkdir -p obj/libs)
 
-test: $(OFILES)
-	$(CC) $(CFLAGS) -o bm_parser.exe $^
+# rules for main and test binaries
+bin: obj/main.o $(O_FILES)
+	$(CC) $(CFLAGS) -o $(EXE) $^
+test: obj/test.o $(O_FILES)
+	$(CC) $(CFLAGS) -o $(EXE) $^
+
+# rules for main and test src files
+obj/main.o: main.c
+	$(CC) $(CFLAGS) -c $< -o $@
+obj/test.o: test.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# rules for src and lib src files
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+obj/libs/%.o: $(sort $(dir $(LIB_C_FILES)))/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OFILES) bm_parser.exe
+	rm -rf obj bin
+
+.PHONY: bin test clean
