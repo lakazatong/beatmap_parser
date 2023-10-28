@@ -14,7 +14,7 @@
 #include "src/prints.h"
 #include "src/jsonify.h"
 
-void handle_SIGUSR1(int sig) {
+void handle_SIGINT(int sig) {
 	FILE* fp = fopen("io/busy", "w+");
 	fclose(fp);
 	Beatmap* bm = parse_beatmap("../io/in");
@@ -24,10 +24,10 @@ void handle_SIGUSR1(int sig) {
 
 #define MAIN_BODY_LINUX \
 	struct sigaction new_action;\
-	new_action.sa_handler = handle_SIGUSR1;\
+	new_action.sa_handler = handle_SIGINT;\
     sigemptyset(&new_action.sa_mask);\
     new_action.sa_flags = 0;\
-    sigaction(SIGUSR1, &new_action, NULL);\
+    sigaction(SIGINT, &new_action, NULL);\
 	while (1)\
 		pause();\
 	printf("beatmap_parser terminated");
