@@ -6,6 +6,7 @@
 			...
 			test.c (this file)
 */
+#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 
@@ -14,7 +15,11 @@
 #include "src/jsonify.h"
 
 void handle_SIGUSR1(int sig) {
-	printf("Received SIGUSR1. Doing custom handling.\n");
+	FILE* fp = fopen("io/busy", "w+");
+	fclose(fp);
+	Beatmap* bm = parse_beatmap("../io/in");
+	jsonify_beatmap(bm, "../io/out");
+	remove("io/busy");
 }
 
 #define MAIN_BODY_LINUX \
@@ -23,9 +28,9 @@ void handle_SIGUSR1(int sig) {
     sigemptyset(&new_action.sa_mask);\
     new_action.sa_flags = 0;\
     sigaction(SIGUSR1, &new_action, NULL);\
-	printf("%u", getpid());\
-	pause();\
-	printf("signal received");\
+	while (1)\
+		pause();\
+	printf("beatmap_parser terminated");
 
 #define MAIN_BODY_WIN MAIN_BODY_LINUX
 
