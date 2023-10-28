@@ -1,38 +1,20 @@
-/* needs c_utils repo to be in the parent directory (see structs.h):
-	../
-		c_utils/
-			...
-		beatmap_parser/
-			...
-			test.c (this file)
-*/
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
+#include <time.h>
 
-#include "src/parser.h"
-#include "src/prints.h"
-#include "src/jsonify.h"
-
-void handle_SIGINT(int sig) {
-	FILE* fp = fopen("../io/busy", "w+");
-	fclose(fp);
-	Beatmap* bm = parse_beatmap("../io/in");
-	jsonify_beatmap(bm, "../io/out");
-	remove("../io/busy");
-}
+#include "parser.h"
+#include "prints.h"
+#include "jsonify.h"
 
 #define MAIN_BODY_LINUX \
-	struct sigaction new_action;\
-	new_action.sa_handler = handle_SIGINT;\
-    sigemptyset(&new_action.sa_mask);\
-    new_action.sa_flags = 0;\
-    sigaction(SIGINT, &new_action, NULL);\
-	while (1)\
-		pause();\
-	printf("beatmap_parser terminated");
+	if (argc < 2)\
+		return 1;\
+	Beatmap* bm = parse_beatmap((char*)argv[1]);\
+	jsonify_beatmap(bm, "../io/out");
 
-#define MAIN_BODY_WIN MAIN_BODY_LINUX
+#define MAIN_BODY_WIN \
+	if (!strcmp(lpCmdLine, ""))\
+		return 1;\
+	Beatmap* bm = parse_beatmap((char*)lpCmdLine);\
+	jsonify_beatmap(bm, "../io/out");
 
 #ifndef _WIN32
 

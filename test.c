@@ -4,23 +4,9 @@
 #include "prints.h"
 #include "jsonify.h"
 
-#define MAIN_BODY_LINUX \
-	if (argc < 2)\
-		return 1;\
-	Beatmap* bm = parse_beatmap((char*)argv[1]);\
-	char filename[1024];\
-	if (sprintf(filename, "%i.json", bm->metadata->beatmapID) < 0)\
-		return 1;\
-	jsonify_beatmap(bm, filename);
+#define MAIN_BODY_LINUX 
 
-#define MAIN_BODY_WIN \
-	if (!strcmp(lpCmdLine, ""))\
-		return 1;\
-	Beatmap* bm = parse_beatmap((char*)lpCmdLine);\
-	char filename[1024];\
-	if (sprintf(filename, "%i.json", bm->metadata->beatmapID) < 0)\
-		return 1;\
-	jsonify_beatmap(bm, filename);
+#define MAIN_BODY_WIN 
 
 #ifndef _WIN32
 
