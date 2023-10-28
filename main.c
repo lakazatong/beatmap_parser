@@ -19,7 +19,7 @@ void handle_SIGUSR1(int sig) {
 
 #define MAIN_BODY_LINUX \
 	pid_t pid = getpid();\
-	FILE* fp = fopen("pid", "w+");\
+	FILE* fp = fopen("../io/pid", "w+");\
 	char* pid_str = malloc(1);\
 	sprintf(pid_str, "%u", pid);\
 	fwrite(pid_str, strlen(pid_str), 1, fp);\
@@ -32,7 +32,7 @@ void handle_SIGUSR1(int sig) {
 	printf("Program is now waiting for a signal...\n");\
 	pause();\
 	printf("Resuming program after signal...\n");\
-	fp = fopen("out", "w+");\
+	fp = fopen("../io/out", "w+");\
 	fwrite("signal received", 15, 1, fp);\
 	fclose(fp);
 
