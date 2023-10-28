@@ -15,11 +15,11 @@
 #include "src/jsonify.h"
 
 void handle_SIGINT(int sig) {
-	FILE* fp = fopen("io/busy", "w+");
+	FILE* fp = fopen("../io/busy", "w+");
 	fclose(fp);
 	Beatmap* bm = parse_beatmap("../io/in");
 	jsonify_beatmap(bm, "../io/out");
-	remove("io/busy");
+	remove("../io/busy");
 }
 
 #define MAIN_BODY_LINUX \
