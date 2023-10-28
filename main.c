@@ -18,23 +18,14 @@ void handle_SIGUSR1(int sig) {
 }
 
 #define MAIN_BODY_LINUX \
-	pid_t pid = getpid();\
-	FILE* fp = fopen("../io/pid", "w+");\
-	char* pid_str = malloc(1);\
-	sprintf(pid_str, "%u", pid);\
-	fwrite(pid_str, strlen(pid_str), 1, fp);\
-	fclose(fp);\
 	struct sigaction new_action;\
 	new_action.sa_handler = handle_SIGUSR1;\
     sigemptyset(&new_action.sa_mask);\
     new_action.sa_flags = 0;\
     sigaction(SIGUSR1, &new_action, NULL);\
-	printf("Program is now waiting for a signal...\n");\
+	printf("%u", getpid());\
 	pause();\
-	printf("Resuming program after signal...\n");\
-	fp = fopen("../io/out", "w+");\
-	fwrite("signal received", 15, 1, fp);\
-	fclose(fp);
+	printf("signal received");\
 
 #define MAIN_BODY_WIN MAIN_BODY_LINUX
 
