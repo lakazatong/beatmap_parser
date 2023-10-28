@@ -4,6 +4,7 @@ CFLAGS=-Wall -Wextra -Wno-unused-parameter
 C_DIR=src
 O_DIR=obj
 LIB_C_FILES=../c_utils/utils/list.c
+EXE=bin/bm_parser.exe
 
 # automatic
 SRC_FILES=$(wildcard $(C_DIR)/*.c)
@@ -13,7 +14,6 @@ C_FILES+=$(LIB_C_FILES)
 O_FILES=$(SRC_FILES_FILENAMES:%=$(O_DIR)/%.o)
 LIB_FILES_FILENAMES=$(basename $(notdir $(filter %.c,$(LIB_C_FILES))))
 O_FILES+=$(LIB_FILES_FILENAMES:%=$(O_DIR)/libs/%.o)
-EXE=bin/bm_parser.exe
 $(shell mkdir -p bin)
 $(shell mkdir -p obj/libs)
 
