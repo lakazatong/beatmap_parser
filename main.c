@@ -1,8 +1,8 @@
 #include <time.h>
 
-#include "parser.h"
-#include "prints.h"
-#include "jsonify.h"
+#include "src/parser.h"
+#include "src/prints.h"
+#include "src/jsonify.h"
 
 #define MAIN_BODY_LINUX \
 	if (argc < 2)\
