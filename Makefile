@@ -1,6 +1,7 @@
 # user defined
 CC=gcc
 CFLAGS=-Wall -Wextra -Wno-unused-parameter
+LDLIBS=
 C_DIR=src
 O_DIR=obj
 LIB_C_FILES=../c_utils/src/list.c

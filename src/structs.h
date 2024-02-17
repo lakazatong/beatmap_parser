@@ -2,7 +2,6 @@
 #define BEATMAP_PARSER_STRUCTS_H
 
 #include "../../c_utils/src/list.h"
-#include "../../c_utils/src/debug.h"
 
 typedef struct {
 	char* audioFilename;
@@ -12,7 +11,7 @@ typedef struct {
 	int countdown;
 	char* sampleSet;
 	float stackLeniency;
-	int mode;
+	int mode; // 0 std 1 taiko 2 ctb 3 mania
 	int letterboxInBreaks;
 	int storyFireInFront;
 	int useSkinSprites;
@@ -73,7 +72,7 @@ typedef struct {
 } BreakEvent;
 
 typedef struct {
-	int type; 
+	int type;
 	int startTime;
 	void* event; // 0 BackgroundEvent 1 VideoEvent 2 BreakEvent
 } Event;
@@ -104,7 +103,8 @@ typedef struct {
 } BeatmapSliderBorderColour; */
 
 typedef struct {
-	int type; // 0 BeatmapComboColour 1 BeatmapSliderTrackOverrideColour 2 BeatmapSliderBorderColour
+	int type; // 0 BeatmapComboColour 1 BeatmapSliderTrackOverrideColour 2
+			  // BeatmapSliderBorderColour
 	int red;
 	int green;
 	int blue;
@@ -147,7 +147,7 @@ typedef struct {
 	int slides;
 	float length;
 	iList* edgeSounds;
-	List* edgeSets;  // EdgeSet*
+	List* edgeSets; // EdgeSet*
 } Slider;
 
 typedef struct {

@@ -1,26 +1,29 @@
 #include "structs.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 General* new_general() {
 	General* r = malloc(sizeof(General));
-	r->audioFilename = malloc(1*sizeof(char));
+	r->audioFilename = malloc(1 * sizeof(char));
 	r->audioLeadIn = 0;
-	r->audioHash = malloc(1*sizeof(char));
+	r->audioHash = malloc(1 * sizeof(char));
 	r->previewTime = -1;
 	r->countdown = 1;
-	r->sampleSet = malloc(6*sizeof(char));
+	r->sampleSet = malloc(6 * sizeof(char));
 	strcpy(r->sampleSet, "Normal");
 	r->sampleSet[6] = '\0';
-	r->skinPreference = malloc(1*sizeof(char));
+	r->skinPreference = malloc(1 * sizeof(char));
 	r->stackLeniency = 0.7;
 	r->mode = 0;
 	r->letterboxInBreaks = 0;
 	r->storyFireInFront = 1;
 	r->useSkinSprites = 0;
 	r->alwaysShowPlayfield = 0;
-	r->overlayPosition = malloc(8*sizeof(char)+1);
+	r->overlayPosition = malloc(8 * sizeof(char) + 1);
 	strcpy(r->overlayPosition, "NoChange");
 	r->overlayPosition[8] = '\0';
-	r->skinPreference = malloc(1*sizeof(char));
+	r->skinPreference = malloc(1 * sizeof(char));
 	r->epilepsyWarning = 0;
 	r->countdownOffset = 0;
 	r->specialStyle = 0;
@@ -41,13 +44,13 @@ Editor* new_editor() {
 
 Metadata* new_metadata() {
 	Metadata* r = malloc(sizeof(Metadata));
-	r->title = malloc(1*sizeof(char));
-	r->titleUnicode = malloc(1*sizeof(char));
-	r->artist = malloc(1*sizeof(char));
-	r->artistUnicode = malloc(1*sizeof(char));
-	r->creator = malloc(1*sizeof(char));
-	r->version = malloc(1*sizeof(char));
-	r->source = malloc(1*sizeof(char));
+	r->title = malloc(1 * sizeof(char));
+	r->titleUnicode = malloc(1 * sizeof(char));
+	r->artist = malloc(1 * sizeof(char));
+	r->artistUnicode = malloc(1 * sizeof(char));
+	r->creator = malloc(1 * sizeof(char));
+	r->version = malloc(1 * sizeof(char));
+	r->source = malloc(1 * sizeof(char));
 	r->tags = new_slist(0);
 	r->beatmapID = 0;
 	r->beatmapSetID = 0;
@@ -207,7 +210,7 @@ Beatmap* new_beatmap() {
 	return r;
 }
 
-void free_general(General* general){
+void free_general(General* general) {
 	free(general->audioFilename);
 	free(general->audioHash);
 	free(general->sampleSet);
@@ -216,12 +219,12 @@ void free_general(General* general){
 	free(general);
 }
 
-void free_editor(Editor* editor){
+void free_editor(Editor* editor) {
 	free_ilist(editor->bookmarks);
 	free(editor);
 }
 
-void free_metadata(Metadata* metadata){
+void free_metadata(Metadata* metadata) {
 	free(metadata->title);
 	free(metadata->titleUnicode);
 	free(metadata->artist);
@@ -233,82 +236,90 @@ void free_metadata(Metadata* metadata){
 	free(metadata);
 }
 
-void free_difficulty(Difficulty* difficulty){
+void free_difficulty(Difficulty* difficulty) {
 	free(difficulty);
 }
 
-void free_backgroundEvent(BackgroundEvent* backgroundEvent){
+void free_backgroundEvent(BackgroundEvent* backgroundEvent) {
 	free(backgroundEvent->filename);
 	free(backgroundEvent);
 }
 
-void free_videoEvent(VideoEvent* videoEvent){
+void free_videoEvent(VideoEvent* videoEvent) {
 	free(videoEvent->filename);
 	free(videoEvent);
 }
 
-void free_event(Event* event){
-	if (event->event != NULL){
-		if (event->type == 0) free_backgroundEvent((BackgroundEvent*)event->event);
-		else if (event->type == 1) free_videoEvent((VideoEvent*)event->event);
+void free_event(Event* event) {
+	if (event->event != NULL) {
+		if (event->type == 0)
+			free_backgroundEvent((BackgroundEvent*)event->event);
+		else if (event->type == 1)
+			free_videoEvent((VideoEvent*)event->event);
 		else
 			free(event->event);
 	}
 	free(event);
 }
 
-void free_timingPoint(TimingPoint* timingPoint){
+void free_timingPoint(TimingPoint* timingPoint) {
 	free(timingPoint);
 }
 
-void free_beatmapColour(BeatmapColour* beatmapColour){
-	if (beatmapColour->object != NULL){
-		if (beatmapColour->type == 0) free(beatmapColour->object);
+void free_beatmapColour(BeatmapColour* beatmapColour) {
+	if (beatmapColour->object != NULL) {
+		if (beatmapColour->type == 0)
+			free(beatmapColour->object);
 	}
 	free(beatmapColour);
 }
 
-void free_hitSample(HitSample* hitSample){
+void free_hitSample(HitSample* hitSample) {
 	free(hitSample->filename);
 	free(hitSample);
 }
 
-void free_slider(Slider* slider){
+void free_slider(Slider* slider) {
 	free_list(slider->curvePoints);
 	free_ilist(slider->edgeSounds);
 	free_list(slider->edgeSets);
 	free(slider);
 }
 
-void free_hitObject(HitObject* hitObject){
-	if (hitObject->object != NULL){
+void free_hitObject(HitObject* hitObject) {
+	if (hitObject->object != NULL) {
 		if (hitObject->type == 1)
 			free_slider((Slider*)hitObject->object);
 		else if (hitObject->type != 0)
 			free(hitObject->object);
 	}
-	if (hitObject->hitSound != NULL) free(hitObject->hitSound);
-	if (hitObject->hitSample != NULL) free_hitSample(hitObject->hitSample);
+	if (hitObject->hitSound != NULL)
+		free(hitObject->hitSound);
+	if (hitObject->hitSample != NULL)
+		free_hitSample(hitObject->hitSample);
 	free(hitObject);
 }
 
-void free_beatmap(Beatmap* beatmap){
+void free_beatmap(Beatmap* beatmap) {
 	free_general(beatmap->general);
 	free_editor(beatmap->editor);
 	free_metadata(beatmap->metadata);
 	free_difficulty(beatmap->difficulty);
-	int i = 0;
-	while (i < beatmap->events->size) free_event(beatmap->events->elements[i++]);
+	size_t i = 0;
+	while (i < beatmap->events->size)
+		free_event(beatmap->events->elements[i++]);
 	free(beatmap->events);
 	i = 0;
-	while (i < beatmap->timingPoints->size) free_timingPoint(beatmap->timingPoints->elements[i++]);
+	while (i < beatmap->timingPoints->size)
+		free_timingPoint(beatmap->timingPoints->elements[i++]);
 	free(beatmap->timingPoints);
 	i = 0;
-	while (i < beatmap->beatmapColours->size) free_beatmapColour(beatmap->beatmapColours->elements[i++]);
+	while (i < beatmap->beatmapColours->size)
+		free_beatmapColour(beatmap->beatmapColours->elements[i++]);
 	free(beatmap->beatmapColours);
 	i = 0;
-	while (i < beatmap->hitObjects->size) free_hitObject(beatmap->hitObjects->elements[i++]);
+	while (i < beatmap->hitObjects->size)
+		free_hitObject(beatmap->hitObjects->elements[i++]);
 	free(beatmap->hitObjects);
 	free(beatmap);
 }
-

@@ -1,16 +1,16 @@
 #include <time.h>
 
-#include "parser.h"
-#include "prints.h"
-#include "jsonify.h"
+#include "src/jsonify.h"
+#include "src/parser.h"
+#include "src/prints.h"
 
-#define MAIN_BODY_LINUX 
+#define MAIN_BODY_LINUX
 
-#define MAIN_BODY_WIN 
+#define MAIN_BODY_WIN
 
 #ifndef _WIN32
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 	clock_t begin = clock();
 	MAIN_BODY_LINUX
 	clock_t end = clock();
@@ -21,8 +21,9 @@ int main(int argc, char* argv[]){
 
 #else
 
-#include <windows.h>
-int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
+#	include <windows.h>
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+			int nCmdShow) {
 	clock_t begin = clock();
 	MAIN_BODY_WIN
 	clock_t end = clock();
